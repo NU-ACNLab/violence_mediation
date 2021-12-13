@@ -32,4 +32,4 @@ dep_df3 <- dep_df3[, c('subid', 'sesid', 'RCADS_sum', 'IL10', 'IL6', 'IL8',
   'TNFa', 'CRP', 'uPAR')]
 dep_df3$subid <- paste0('MWMH', dep_df3$subid)
 
-write.csv(dep_df3, '~/Documents/Northwestern/projects/violence_mediation/data/dep_immune.csv')
+write.csv(dep_df3, '~/Documents/Northwestern/projects/violence_mediation/data/dep_immune.csv', row.names=FALSE)
