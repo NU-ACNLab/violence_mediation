@@ -122,4 +122,4 @@ for(ss in 1:length(mu.prod))
 }
 ##################################
 
-saveRDS(re, '/home/erb9722/studies/mwmh/data/murder_re.rds')
+saveRDS(re, '~/Documents/Northwestern/projects/violence_mediation/data/murder_re.rds')
