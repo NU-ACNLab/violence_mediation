@@ -17,10 +17,13 @@ amyg_df <- read.csv('~/Documents/Northwestern/projects/violence_mediation/data/a
 final_df <- merge(viol_df, dep_df, by=c('subid', 'sesid'))
 final_df <- merge(final_df, amyg_df, by=c('subid', 'sesid'))
 
+#final_df <- final_df[!is.na(final_df$ever_wo5) & !is.na(final_df$RCADS_sum) &
+#  final_df$sesid == 1 & !is.na(final_df$IL6), ]
 final_df <- final_df[!is.na(final_df$ever_wo5) & !is.na(final_df$RCADS_sum) &
-  final_df$sesid == 1 & !is.na(final_df$IL6), ]
+  final_df$sesid == 1 & !is.na(final_df$IL6) & !is.na(final_df$murder), ]
 
-X <- final_df$ever_wo5
+#X <- final_df$ever_wo5
+X <- final_df$murder
 Y <- final_df$RCADS_sum
 M1 <- as.matrix(final_df[, c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR')])
 M2 <- as.matrix(final_df[, paste0('region', 1:300)])
@@ -46,7 +49,9 @@ rho.increase<-FALSE
 
 nu1=nu2<-2
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
-mu.prod<-c(0,0.1,0.5,1,2,Inf)
+#kappa1=kappa2=kappa3=kappa4<-5
+#mu.prod<-c(0,0.1,0.5,1,2,Inf)
+mu.prod<-5
 ##################################
 
 
@@ -116,3 +121,5 @@ for(ss in 1:length(mu.prod))
   }
 }
 ##################################
+
+saveRDS(re, '/home/erb9722/studies/mwmh/data/murder_re.rds')
