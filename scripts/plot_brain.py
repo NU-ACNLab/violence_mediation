@@ -6,9 +6,9 @@
 
 from nilearn import plotting
 
-dmn_coords = [(0, -52, 18), (-46, -68, 32), (46, -68, 32), (1, 50, -5)]
+med_coords = [(11, 31, -23)]
 
 view = plotting.view_markers(
-    dmn_coords, ['red', 'cyan', 'magenta', 'orange'], marker_size=10)
+    med_coords, ['red'], marker_size=10)
 
-view.open_in_browser() 
+view.open_in_browser()
