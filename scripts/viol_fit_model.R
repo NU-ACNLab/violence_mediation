@@ -46,9 +46,7 @@ rho.increase<-FALSE
 
 nu1=nu2<-2
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
-#kappa1=kappa2=kappa3=kappa4<-5
-#mu.prod<-c(0,0.1,0.5,1,2,Inf)
-mu.prod<-5
+mu.prod<-c(0,0.1,0.5,1,2,Inf)
 ##################################
 
 

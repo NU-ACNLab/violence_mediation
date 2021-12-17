@@ -4,5 +4,6 @@ papers/*
 plots/*
 data/*
 abstracts/*
+models/*
 *.rds
 *.csv
