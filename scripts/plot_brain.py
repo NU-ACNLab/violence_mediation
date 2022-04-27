@@ -6,7 +6,7 @@
 
 from nilearn import plotting
 
-med_coords = [(11, 31, -23)]
+med_coords = [(-42, -57, 41)]
 
 view = plotting.view_markers(
     med_coords, ['red'], marker_size=10)

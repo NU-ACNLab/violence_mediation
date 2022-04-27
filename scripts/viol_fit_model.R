@@ -117,7 +117,7 @@ for(ss in 1:length(mu.prod))
 }
 ##################################
 
-saveRDS(re, '~/Documents/Northwestern/projects/violence_mediation/models/murder_re.rds')
+saveRDS(re, '~/Documents/Northwestern/projects/violence_mediation/models/viol_re.rds')
 
 write.csv(re[[1]][[1]]$IE.M1M2, '~/Documents/Northwestern/projects/violence_mediation/models/IE_M1M2.csv')
 write.csv(re[[1]][[1]]$IE.M1, '~/Documents/Northwestern/projects/violence_mediation/models/IE_M1.csv')
