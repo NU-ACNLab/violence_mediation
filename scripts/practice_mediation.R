@@ -9,7 +9,7 @@
 # Load data
 viol_df <- read.csv('~/Documents/Northwestern/projects/violence_mediation/data/violence.csv')
 dep_df <- read.csv('~/Documents/Northwestern/projects/violence_mediation/data/dep_immune.csv')
-immune_df <- read.csv('')
+#immune_df <- read.csv('')
 amyg_df <- read.csv('~/Documents/Northwestern/projects/violence_mediation/data/amygconn_2021-12-12.csv')
 
 final_df <- merge(viol_df, dep_df, by=c('subid', 'sesid'))
@@ -19,6 +19,8 @@ mini_df <- final_df[final_df$sesid == 1 & !is.na(final_df$ever), c('subid', 'eve
 
 names(mini_df) <- c('subid', 'violence', 'IL6', 'amygconn', 'anxiety')
 row.names(mini_df) <- 1:nrow(mini_df)
+
+data1 <- mini_df
 
 # Scale continuous variables
 mini_df$IL6 <- scale(mini_df$IL6)
