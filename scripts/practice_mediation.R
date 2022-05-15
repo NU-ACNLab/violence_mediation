@@ -3,7 +3,9 @@
 ### Based on David MacKinnon's "Tutorial in Modern Mediation Analysis"
 ###
 ### Ellyn Butler
-### April 27, 2022
+### April 27, 2022 - May 12, 2022
+
+library(psych)
 
 
 # Load data
@@ -15,17 +17,21 @@ amyg_df <- read.csv('~/Documents/Northwestern/projects/violence_mediation/data/a
 final_df <- merge(viol_df, dep_df, by=c('subid', 'sesid'))
 final_df <- merge(final_df, amyg_df, by=c('subid', 'sesid'))
 
-mini_df <- final_df[final_df$sesid == 1 & !is.na(final_df$ever), c('subid', 'ever', 'IL6', 'region200', 'RCADS_sum')]
+mini_df <- final_df[final_df$sesid == 1 & !is.na(final_df$ever) & !is.na(final_df$IL6), c('subid', 'ever', 'IL6', 'region200', 'RCADS_sum')]
+
+describe(mini_df)
 
 names(mini_df) <- c('subid', 'violence', 'IL6', 'amygconn', 'anxiety')
 row.names(mini_df) <- 1:nrow(mini_df)
 
 data1 <- mini_df
+xy_mod_noscale <- lm(anxiety ~ violence, data=data1)
 
 # Scale continuous variables
 mini_df$IL6 <- scale(mini_df$IL6)
 mini_df$amygconn <- scale(mini_df$amygconn)
 mini_df$anxiety <- scale(mini_df$anxiety)
+
 
 ############################# One Mediator Model #############################
 xy_mod <- lm(anxiety ~ violence, data=mini_df)
