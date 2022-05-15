@@ -12,17 +12,21 @@ source("/projects/b1108/projects/multimodal_integration/PathLasso.R")
 # load data
 viol_df <- read.csv('/projects/b1108/projects/violence_mediation/data/violence.csv')
 dep_df <- read.csv('/projects/b1108/projects/violence_mediation/data/dep_immune.csv')
+mono_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/immune/monocytes.csv')
 amyg_df <- read.csv('/projects/b1108/projects/violence_mediation/data/amygconn_2021-12-12.csv')
 
 final_df <- merge(viol_df, dep_df, by=c('subid', 'sesid'))
+final_df <- merge(final_df, mono_df, by=c('subid', 'sesid'))
 final_df <- merge(final_df, amyg_df, by=c('subid', 'sesid'))
 
 final_df <- final_df[!is.na(final_df$ever) & !is.na(final_df$RCADS_sum) &
-  final_df$sesid == 1 & !is.na(final_df$IL6), ]
+  final_df$sesid == 1 & !is.na(final_df$IL6) & !is.na(final_df$ClassicalMono) &
+  !is.na(final_df$NonClassicalMono), ]
 
 X <- final_df$ever
 Y <- final_df$RCADS_sum
-M1 <- as.matrix(final_df[, c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR')])
+M1 <- as.matrix(final_df[, c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR',
+                              'ClassicalMono', 'NonClassicalMono')])
 M2 <- as.matrix(final_df[, paste0('region', 1:300)])
 
 # X: violence, 1=Yes, 0=No - vector
@@ -117,8 +121,8 @@ for(ss in 1:length(mu.prod))
 }
 ##################################
 
-saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re.rds')
+saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_mono.rds')
 
-write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2.csv')
-write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1.csv')
-write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2.csv')
+write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_mono.csv')
+write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_mono.csv')
+write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_mono.csv')
