@@ -121,8 +121,8 @@ for(ss in 1:length(mu.prod))
 }
 ##################################
 
-saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_mono.rds')
+saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_mono_short.rds')
 
-write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_mono.csv')
-write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_mono.csv')
-write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_mono.csv')
+write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_mono_short.csv')
+write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_mono_short.csv')
+write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_mono_short.csv')
