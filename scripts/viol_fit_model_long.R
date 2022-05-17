@@ -1,7 +1,7 @@
 ### This script fits the basic mediation model
 ###
 ### Ellyn Butler
-### May 16, 2022
+### December 12, 2021
 
 
 rm(list=ls())
@@ -49,8 +49,8 @@ rho<-1
 rho.increase<-FALSE
 
 nu1=nu2<-2
-kappa1=kappa2=kappa3=kappa4<-10^c(seq(-2,0,length.out=5)[-1],seq(0,2,length.out=3)[-1])
-mu.prod<-c(0,0.5,2,Inf)
+kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
+mu.prod<-c(0,0.1,0.5,1,2,Inf)
 ##################################
 
 
@@ -121,8 +121,8 @@ for(ss in 1:length(mu.prod))
 }
 ##################################
 
-saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_mono_short.rds')
+saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_mono_long.rds')
 
-write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_mono_short.csv')
-write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_mono_short.csv')
-write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_mono_short.csv')
+write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_mono_long.csv')
+write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_mono_long.csv')
+write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_mono_long.csv')
