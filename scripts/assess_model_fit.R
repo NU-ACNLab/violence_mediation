@@ -39,6 +39,14 @@ for (i in 1:nrow(full_df)) {
 write.csv(full_df, '/projects/b1108/projects/violence_mediation/models/viol_re_mono_long_summary.csv', row.names=FALSE)
 
 
+#re_long[[1]][[17]]
+
+tot_ie_m1 <- re_long[[1]][[17]]$beta%*%re_long[[1]][[17]]$theta
+
+tot_ie_m2 <- re_long[[1]][[17]]$zeta%*%re_long[[1]][[17]]$pi
+
+tot_ie_m1m2
+
 
 ################################## Mini Models ##################################
 
