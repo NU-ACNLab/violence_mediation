@@ -42,10 +42,6 @@ write.csv(full_df, '/projects/b1108/projects/violence_mediation/models/viol_re_m
 
 ################################## Mini Models ##################################
 
-readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_2_50_1.rds')
-readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_2_50_2.rds')
-readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_2_50_3.rds')
-readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_2_50_4.rds')
 
 for (m in 1:4) {
   full_df <- expand.grid(kappa1, mu.prod)
@@ -72,7 +68,17 @@ for (m in 1:4) {
     k=k+1
     if (k > length(kappa1)) { k=1 }
   }
-
+  assign(paste0('full_df', m), full_df)
 
   write.csv(full_df, paste0('/projects/b1108/projects/violence_mediation/models/viol_re_summary_', m, '.csv'), row.names=FALSE)
 }
+
+
+#### Max log likelihood
+
+full_df[full_df$logLik_sum == max(full_df$logLik_sum), ]
+
+full_df1[full_df1$logLik_sum == max(full_df1$logLik_sum), ]
+full_df2[full_df2$logLik_sum == max(full_df2$logLik_sum), ]
+full_df3[full_df3$logLik_sum == max(full_df3$logLik_sum), ]
+full_df4[full_df4$logLik_sum == max(full_df4$logLik_sum), ]
