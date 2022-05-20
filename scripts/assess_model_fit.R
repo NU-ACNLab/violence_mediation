@@ -39,13 +39,19 @@ for (i in 1:nrow(full_df)) {
 write.csv(full_df, '/projects/b1108/projects/violence_mediation/models/viol_re_mono_long_summary.csv', row.names=FALSE)
 
 
-#re_long[[1]][[17]]
+full_df[full_df$logLik_sum == max(full_df$logLik_sum), ]
 
 tot_ie_m1 <- re_long[[1]][[17]]$beta%*%re_long[[1]][[17]]$theta
 
 tot_ie_m2 <- re_long[[1]][[17]]$zeta%*%re_long[[1]][[17]]$pi
 
-tot_ie_m1m2
+tot_ie_m1m2 <- 0
+
+for (j in 1:8) {
+  for (k in 1:300) {
+    tot_ie_m1m2 <- tot_ie_m1m2 + re_long[[1]][[17]]$beta[j]*re_long[[1]][[17]]$Lambda[j, k]*re_long[[1]][[17]]$pi[k]
+  }
+}
 
 
 ################################## Mini Models ##################################
