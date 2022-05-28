@@ -10,7 +10,7 @@ mu.prod<-c(0,0.1,0.5,1,2,Inf)
 
 ################################## Full Model ##################################
 
-re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_mono_long.rds')
+re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long.rds')
 
 full_df <- expand.grid(kappa1, mu.prod)
 names(full_df) <- c('kappa1', 'muprod')
@@ -36,22 +36,26 @@ for (i in 1:nrow(full_df)) {
 }
 
 
-write.csv(full_df, '/projects/b1108/projects/violence_mediation/models/viol_re_mono_long_summary.csv', row.names=FALSE)
+write.csv(full_df, '/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_summary.csv', row.names=FALSE)
 
 
 full_df[full_df$logLik_sum == max(full_df$logLik_sum), ]
+# ^ Choose parameter combination based on log Lik here
 
-tot_ie_m1 <- re_long[[1]][[17]]$beta%*%re_long[[1]][[17]]$theta
+tot_ie_m1 <- re_long[[1]][[1]]$beta%*%re_long[[1]][[1]]$theta
 
-tot_ie_m2 <- re_long[[1]][[17]]$zeta%*%re_long[[1]][[17]]$pi
+tot_ie_m2 <- re_long[[1]][[1]]$zeta%*%re_long[[1]][[1]]$pi
 
 tot_ie_m1m2 <- 0
 
 for (j in 1:8) {
   for (k in 1:300) {
-    tot_ie_m1m2 <- tot_ie_m1m2 + re_long[[1]][[17]]$beta[j]*re_long[[1]][[17]]$Lambda[j, k]*re_long[[1]][[17]]$pi[k]
+    tot_ie_m1m2 <- tot_ie_m1m2 + re_long[[1]][[1]]$beta[j]*re_long[[1]][[1]]$Lambda[j, k]*re_long[[1]][[1]]$pi[k]
   }
 }
+
+# Total effect (c)... try with data too
+tot_ie_m1 + tot_ie_m2 + tot_ie_m1m2 + re_long[[1]][[1]]$delta
 
 
 ################################## Mini Models ##################################
