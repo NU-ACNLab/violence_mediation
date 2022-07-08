@@ -2,7 +2,9 @@
 ### mediation models, and summarizes the hyper-parameters and log likelihoods
 ###
 ### Ellyn Butler
-### May 20, 2022
+### May 20, 2022 - July 8, 2022
+
+library('ggplot2')
 
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
@@ -41,6 +43,67 @@ write.csv(full_df, '/projects/b1108/projects/violence_mediation/models/viol_re_s
 
 full_df[full_df$logLik_sum == max(full_df$logLik_sum), ]
 # ^ Choose parameter combination based on log Lik here
+# kappa1 = 1 implies that there is little penalty on the pathway effects
+
+# percent zeros
+sum(re_long[[1]][[6]]$IE.M1M2 == 0)
+sum(re_long[[1]][[6]]$IE.M1M2 == 0)/(nrow(re_long[[1]][[6]]$IE.M1M2)*ncol(re_long[[1]][[6]]$IE.M1M2))
+
+### When does a cell become 0? Start with smallest when mu.prod = 0
+# ^ Is there a turning point where many of them become 0?
+# How quickly are the values decreasing?
+# Make a line plot of this
+sum(re_long[[1]][[1]]$IE.M1M2 == 0)/(nrow(re_long[[1]][[1]]$IE.M1M2)*ncol(re_long[[1]][[1]]$IE.M1M2))
+sum(re_long[[1]][[2]]$IE.M1M2 == 0)/(nrow(re_long[[1]][[2]]$IE.M1M2)*ncol(re_long[[1]][[2]]$IE.M1M2))
+sum(re_long[[1]][[3]]$IE.M1M2 == 0)/(nrow(re_long[[1]][[3]]$IE.M1M2)*ncol(re_long[[1]][[3]]$IE.M1M2))
+sum(re_long[[1]][[4]]$IE.M1M2 == 0)/(nrow(re_long[[1]][[4]]$IE.M1M2)*ncol(re_long[[1]][[4]]$IE.M1M2))
+sum(re_long[[1]][[5]]$IE.M1M2 == 0)/(nrow(re_long[[1]][[5]]$IE.M1M2)*ncol(re_long[[1]][[5]]$IE.M1M2)) # changes rapidly here
+sum(re_long[[1]][[6]]$IE.M1M2 == 0)/(nrow(re_long[[1]][[6]]$IE.M1M2)*ncol(re_long[[1]][[6]]$IE.M1M2))
+
+coeff_df <- data.frame(ID=1:(8*300*length(mu.prod)), kappa1=rep(kappa1[1], 8*300*length(mu.prod)),
+                      mu.prod=factor(c(rep(mu.prod[1], 8*300), rep(mu.prod[2], 8*300),
+                                rep(mu.prod[3], 8*300), rep(mu.prod[4], 8*300),
+                                rep(mu.prod[5], 8*300), rep(mu.prod[6], 8*300))),
+                      Immune=rep(c(rep(1, 300), rep(2, 300), rep(3, 300), rep(4, 300),
+                                 rep(5, 300), rep(6, 300), rep(7, 300), rep(8, 300)),
+                                 length(mu.prod)),
+                      Amygdala=rep(1:300, 8*length(mu.prod)),
+                      coefficient=c(re_long[[1]][[1]]$IE.M1M2[1,], re_long[[1]][[1]]$IE.M1M2[2,],
+                                    re_long[[1]][[1]]$IE.M1M2[3,], re_long[[1]][[1]]$IE.M1M2[4,],
+                                    re_long[[1]][[1]]$IE.M1M2[5,], re_long[[1]][[1]]$IE.M1M2[6,],
+                                    re_long[[1]][[1]]$IE.M1M2[7,], re_long[[1]][[1]]$IE.M1M2[8,],
+                                    re_long[[1]][[2]]$IE.M1M2[1,], re_long[[1]][[2]]$IE.M1M2[2,],
+                                    re_long[[1]][[2]]$IE.M1M2[3,], re_long[[1]][[2]]$IE.M1M2[4,],
+                                    re_long[[1]][[2]]$IE.M1M2[5,], re_long[[1]][[2]]$IE.M1M2[6,],
+                                    re_long[[1]][[2]]$IE.M1M2[7,], re_long[[1]][[2]]$IE.M1M2[8,],
+                                    re_long[[1]][[3]]$IE.M1M2[1,], re_long[[1]][[3]]$IE.M1M2[2,],
+                                    re_long[[1]][[3]]$IE.M1M2[3,], re_long[[1]][[3]]$IE.M1M2[4,],
+                                    re_long[[1]][[3]]$IE.M1M2[5,], re_long[[1]][[3]]$IE.M1M2[6,],
+                                    re_long[[1]][[3]]$IE.M1M2[7,], re_long[[1]][[3]]$IE.M1M2[8,],
+                                    re_long[[1]][[4]]$IE.M1M2[1,], re_long[[1]][[4]]$IE.M1M2[2,],
+                                    re_long[[1]][[4]]$IE.M1M2[3,], re_long[[1]][[4]]$IE.M1M2[4,],
+                                    re_long[[1]][[4]]$IE.M1M2[5,], re_long[[1]][[4]]$IE.M1M2[6,],
+                                    re_long[[1]][[4]]$IE.M1M2[7,], re_long[[1]][[4]]$IE.M1M2[8,],
+                                    re_long[[1]][[5]]$IE.M1M2[1,], re_long[[1]][[5]]$IE.M1M2[2,],
+                                    re_long[[1]][[5]]$IE.M1M2[3,], re_long[[1]][[5]]$IE.M1M2[4,],
+                                    re_long[[1]][[5]]$IE.M1M2[5,], re_long[[1]][[5]]$IE.M1M2[6,],
+                                    re_long[[1]][[5]]$IE.M1M2[7,], re_long[[1]][[5]]$IE.M1M2[8,],
+                                    re_long[[1]][[6]]$IE.M1M2[1,], re_long[[1]][[6]]$IE.M1M2[2,],
+                                    re_long[[1]][[6]]$IE.M1M2[3,], re_long[[1]][[6]]$IE.M1M2[4,],
+                                    re_long[[1]][[6]]$IE.M1M2[5,], re_long[[1]][[6]]$IE.M1M2[6,],
+                                    re_long[[1]][[6]]$IE.M1M2[7,], re_long[[1]][[6]]$IE.M1M2[8,]))
+
+coeff_df$Path <- paste(coeff_df$Immune, coeff_df$Amygdala, '_')
+
+coeff_plot <- ggplot(coeff_df[coeff_df$Path %in% 1:100, ], aes(x = mu.prod, y = coefficient, group = Path)) +
+  geom_point() + theme_linedraw() + geom_line() #NOT WORKING
+
+pdf('/projects/b1108/projects/violence_mediation/plots/coefficients.pdf', width=6, height=6)
+coeff_plot
+dev.off()
+
+
+### Overall effects
 
 tot_ie_m1 <- re_long[[1]][[1]]$beta%*%re_long[[1]][[1]]$theta
 
