@@ -2,9 +2,10 @@
 ### mediation models, and summarizes the hyper-parameters and log likelihoods
 ###
 ### Ellyn Butler
-### May 20, 2022 - July 8, 2022
+### May 20, 2022 - July 18, 2022
 
 library('ggplot2')
+library('ggpubr')
 
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
@@ -12,7 +13,8 @@ mu.prod<-c(0,0.1,0.5,1,2,Inf)
 
 ################################## Full Model ##################################
 
-re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long.rds')
+#re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long.rds')
+re_long <- readRDS('/Users/flutist4129/Documents/Northwestern/projects/violence_mediation/models/viol_re_scaled_long.rds')
 
 full_df <- expand.grid(kappa1, mu.prod)
 names(full_df) <- c('kappa1', 'muprod')
@@ -93,17 +95,76 @@ coeff_df <- data.frame(ID=1:(8*300*length(mu.prod)), kappa1=rep(kappa1[1], 8*300
                                     re_long[[1]][[6]]$IE.M1M2[5,], re_long[[1]][[6]]$IE.M1M2[6,],
                                     re_long[[1]][[6]]$IE.M1M2[7,], re_long[[1]][[6]]$IE.M1M2[8,]))
 
-coeff_df$Path <- paste(coeff_df$Immune, coeff_df$Amygdala, '_')
+coeff_df$Path <- paste(coeff_df$Immune, coeff_df$Amygdala, sep='_')
 
-coeff_plot <- ggplot(coeff_df[coeff_df$Path %in% 1:100, ], aes(x = mu.prod, y = coefficient, group = Path)) +
-  geom_point() + theme_linedraw() + geom_line() #NOT WORKING
+coeff_plot <- ggplot(coeff_df, aes(x = mu.prod, y = coefficient, group = Path)) +
+  geom_point(alpha=0.5) + theme_linedraw() + geom_line(alpha=0.3)
 
-pdf('/projects/b1108/projects/violence_mediation/plots/coefficients.pdf', width=6, height=6)
+
+pdf('/Users/flutist4129/Documents/Northwestern/projects/violence_mediation/plots/coefficients.pdf', width=6, height=6)
+#pdf('/projects/b1108/projects/violence_mediation/plots/coefficients.pdf', width=6, height=6)
 coeff_plot
 dev.off()
 
+################################# To Zero Plots ################################
 
-### Overall effects
+coeff_df$zero_pt1pt512inf <- 0
+coeff_df$zero_pt512inf <- 0
+coeff_df$zero_12inf <- 0
+coeff_df$zero_2inf <- 0
+for (i in 1:nrow(coeff_df)) {
+  path <- coeff_df[i, 'Path']
+  pt1_coeff <- coeff_df[coeff_df$Path == path & coeff_df$mu.prod == '0.1', 'coefficient']
+  pt5_coeff <- coeff_df[coeff_df$Path == path & coeff_df$mu.prod == '0.5', 'coefficient']
+  one_coeff <- coeff_df[coeff_df$Path == path & coeff_df$mu.prod == '1', 'coefficient']
+  two_coeff <- coeff_df[coeff_df$Path == path & coeff_df$mu.prod == '2', 'coefficient']
+  inf_coeff <- coeff_df[coeff_df$Path == path & coeff_df$mu.prod == 'Inf', 'coefficient']
+  if (pt1_coeff + pt5_coeff + one_coeff + two_coeff + inf_coeff == 0) {
+    coeff_df[i, 'zero_pt1pt512inf'] <- 1
+  } else if (pt5_coeff + one_coeff + two_coeff + inf_coeff == 0) {
+    coeff_df[i, 'zero_pt512inf'] <- 1
+  } else if (one_coeff + two_coeff + inf_coeff == 0) {
+    coeff_df[i, 'zero_12inf'] <- 1
+  } else if (two_coeff + inf_coeff == 0) {
+    coeff_df[i, 'zero_2inf'] <- 1
+  }
+}
+
+# paths that are 0 for both 2 and infinity
+zero_2inf_df <- coeff_df[coeff_df$zero_2inf == 1, ]
+
+coeff_plot0_2inf <- ggplot(zero_2inf_df, aes(x = mu.prod, y = coefficient, group = Path)) +
+  geom_point(alpha=0.5) + theme_linedraw() + geom_line(alpha=0.3) +
+  ggtitle('Coefficients 0 starting at mu.prod = 2')
+
+## 1+2+Inf
+zero_12inf_df <- coeff_df[coeff_df$zero_12inf == 1, ]
+
+coeff_plot0_12inf <- ggplot(zero_12inf_df, aes(x = mu.prod, y = coefficient, group = Path)) +
+  geom_point(alpha=0.5) + theme_linedraw() + geom_line(alpha=0.3) +
+  ggtitle('Coefficients 0 starting at mu.prod = 1')
+
+## 0.5+1+2+Inf
+zero_pt512inf_df <- coeff_df[coeff_df$zero_pt512inf == 1, ]
+
+coeff_plot0_pt512inf <- ggplot(zero_pt512inf_df, aes(x = mu.prod, y = coefficient, group = Path)) +
+  geom_point(alpha=0.5) + theme_linedraw() + geom_line(alpha=0.3) +
+  ggtitle('Coefficients 0 starting at mu.prod = .5')
+
+## 0.1+0.5+1+2+Inf
+zero_pt1pt512inf_df <- coeff_df[coeff_df$zero_pt1pt512inf == 1, ]
+
+coeff_plot0_pt1pt512inf <- ggplot(zero_pt1pt512inf_df, aes(x = mu.prod, y = coefficient, group = Path)) +
+  geom_point(alpha=0.5) + theme_linedraw() + geom_line(alpha=0.3) +
+  ggtitle('Coefficients 0 starting at mu.prod = .1')
+
+#pdf('/projects/b1108/projects/violence_mediation/plots/coefficients_zero.pdf', width=10, height=10)
+pdf('/Users/flutist4129/Documents/Northwestern/projects/violence_mediation/plots/coefficients_zero.pdf', width=10, height=10)
+ggarrange(coeff_plot0_2inf, coeff_plot0_12inf,
+          coeff_plot0_pt512inf, coeff_plot0_pt1pt512inf, nrow=2, ncol=2)
+dev.off()
+
+############################## Overall effects #################################
 
 tot_ie_m1 <- re_long[[1]][[1]]$beta%*%re_long[[1]][[1]]$theta
 

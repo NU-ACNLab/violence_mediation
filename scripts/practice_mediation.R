@@ -3,9 +3,10 @@
 ### Based on David MacKinnon's "Tutorial in Modern Mediation Analysis"
 ###
 ### Ellyn Butler
-### April 27, 2022 - May 12, 2022
+### April 27, 2022 - July 15, 2022
 
 library(psych)
+library(mediation)
 
 
 # Load data
@@ -61,6 +62,24 @@ ci_lower <- med_prod - 1.96*se_ab
 ci_higher <- med_prod + 1.96*se_ab
 
 ### Bootstrap CI
+# https://crumplab.com/psyc7709_2019/book/docs/bootstrapped-mediation-tutorial.html
+
+violence <- (data1$violence - mean(data1$violence))/sd(data1$violence)
+IL6 <- (data1$IL6 - mean(data1$IL6))/sd(data1$IL6)
+anxiety <- (data1$anxiety - mean(data1$anxiety))/sd(data1$anxiety)
+
+model.m <- lm(IL6 ~ violence)
+model.y <- lm(anxiety ~ IL6 + violence)
+
+mediation_results <- mediate(model.m = model.m,
+                       model.y = model.y,
+                       sims = 500,
+                       boot = TRUE,
+                       mediator = "IL6",
+                       treat = "violence")
+summary(mediation_results) #'perc'
+
+
 
 
 ########## Assumptions
