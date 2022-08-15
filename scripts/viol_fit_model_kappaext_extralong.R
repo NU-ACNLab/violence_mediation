@@ -1,7 +1,7 @@
 ### This script fits the basic mediation model
 ###
 ### Ellyn Butler
-### May 17, 2022 - July 19, 2022
+### August 15, 2022
 
 
 rm(list=ls())
@@ -24,10 +24,10 @@ final_df <- final_df[!is.na(final_df$ever) & !is.na(final_df$RCADS_sum) &
   !is.na(final_df$NonClassicalMono), ]
 
 X <- final_df$ever
-Y <- scale(final_df$RCADS_sum)
-M1 <- scale(as.matrix(final_df[, c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR',
-                              'ClassicalMono', 'NonClassicalMono')]))
-M2 <- scale(as.matrix(final_df[, paste0('region', c(1:243, 246:300))]))
+Y <- final_df$RCADS_sum
+M1 <- as.matrix(final_df[, c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR',
+                              'ClassicalMono', 'NonClassicalMono')])
+M2 <- as.matrix(final_df[, paste0('region', 1:300)])
 
 # X: violence, 1=Yes, 0=No - vector
 # Y: depression score - vector
@@ -41,7 +41,7 @@ M2 <- scale(as.matrix(final_df[, paste0('region', c(1:243, 246:300))]))
 # if standardize data
 standardize<-TRUE
 
-max.itr<-5000
+max.itr<-10000
 tol<-1e-6
 trace<-FALSE
 
@@ -49,7 +49,7 @@ rho<-1
 rho.increase<-FALSE
 
 nu1=nu2<-2
-kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
+kappa1=kappa2=kappa3=kappa4<-c(150, 200, 250, 300, 1000)
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
 ##################################
 
@@ -121,10 +121,8 @@ for(ss in 1:length(mu.prod))
 }
 ##################################
 
-warnings()
+saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_mono_kappaext_extralong.rds')
 
-saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long.rds')
-
-write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_scaled_long.csv')
-write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_scaled_long.csv')
-write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_scaled_long.csv')
+write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_mono_kappaext_extralong.csv')
+write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_mono_kappaext_extralong.csv')
+write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_mono_kappaext_extralong.csv')

@@ -13,8 +13,8 @@ mu.prod<-c(0,0.1,0.5,1,2,Inf)
 
 ################################## Full Model ##################################
 
-#re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long.rds')
-re_long <- readRDS('/Users/flutist4129/Documents/Northwestern/projects/violence_mediation/models/viol_re_scaled_long.rds')
+re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long.rds')
+#re_long <- readRDS('/Users/flutist4129/Documents/Northwestern/projects/violence_mediation/models/viol_re_scaled_long.rds')
 
 full_df <- expand.grid(kappa1, mu.prod)
 names(full_df) <- c('kappa1', 'muprod')
@@ -101,8 +101,8 @@ coeff_plot <- ggplot(coeff_df, aes(x = mu.prod, y = coefficient, group = Path)) 
   geom_point(alpha=0.5) + theme_linedraw() + geom_line(alpha=0.3)
 
 
-pdf('/Users/flutist4129/Documents/Northwestern/projects/violence_mediation/plots/coefficients.pdf', width=6, height=6)
-#pdf('/projects/b1108/projects/violence_mediation/plots/coefficients.pdf', width=6, height=6)
+#pdf('/Users/flutist4129/Documents/Northwestern/projects/violence_mediation/plots/coefficients.pdf', width=6, height=6)
+pdf('/projects/b1108/projects/violence_mediation/plots/coefficients.pdf', width=6, height=6)
 coeff_plot
 dev.off()
 
