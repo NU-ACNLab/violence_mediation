@@ -11,7 +11,7 @@
 #SBATCH --mail-type=FAIL                                  ## you can receive e-mail alerts from SLURM when your job begins and when your job finishes (completed, failed, etc)
 #SBATCH --mail-user=ellynbutler2027@u.northwestern.edu    ## your email
 
-Rscript /projects/b1108/projects/violence_mediation/scripts/viol_fit_model_unassigned.R
+Rscript /projects/b1108/projects/violence_mediation/scripts/within_networks/viol_fit_model_unassigned.R
 
 # sbatch -o /projects/b1108/projects/violence_mediation/launch/viol_fit_unassigned.txt /projects/b1108/projects/violence_mediation/scripts/within_networks/launch_viol_fit_model_unassigned.sh
 
