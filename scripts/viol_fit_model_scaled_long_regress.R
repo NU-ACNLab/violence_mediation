@@ -1,7 +1,7 @@
 ### This script fits the basic mediation model
 ###
 ### Ellyn Butler
-### May 17, 2022 - July 19, 2022
+### August 22, 2022
 
 
 rm(list=ls())
@@ -14,10 +14,18 @@ viol_df <- read.csv('/projects/b1108/projects/violence_mediation/data/violence.c
 dep_df <- read.csv('/projects/b1108/projects/violence_mediation/data/dep_immune.csv')
 mono_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/immune/monocytes.csv')
 amyg_df <- read.csv('/projects/b1108/projects/violence_mediation/data/amygconn_2021-12-12.csv')
+age_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/demographic/age_visits_2022-07-26.csv')
+demo_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/demographic/demographics_2022-08-22.csv')
+#ses_df <- read.csv()
+# variables I need in here: age, sex, race, puberty, BMI, SES
+# ideally also: Confusion, Hubbub, and Order Scale, the Brody Parenting Scale,
+# the Harter Social Support Scale, and the Physical Activity and Exercise Scale
 
 final_df <- merge(viol_df, dep_df, by=c('subid', 'sesid'))
 final_df <- merge(final_df, mono_df, by=c('subid', 'sesid'))
 final_df <- merge(final_df, amyg_df, by=c('subid', 'sesid'))
+final_df <- merge(final_df, age_df, by=c('subid', 'sesid'))
+final_df <- merge(final_df, demo_df, by=c('subid', 'sesid'))
 
 final_df <- final_df[!is.na(final_df$ever) & !is.na(final_df$RCADS_sum) &
   final_df$sesid == 1 & !is.na(final_df$IL6) & !is.na(final_df$ClassicalMono) &
@@ -28,12 +36,27 @@ Y <- scale(final_df$RCADS_sum)
 M1 <- scale(as.matrix(final_df[, c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR',
                               'ClassicalMono', 'NonClassicalMono')]))
 M2 <- scale(as.matrix(final_df[, paste0('region', 1:300)])) # change to c(1:243, 246:300)
+Cov1 <- scale(as.matrix(final_df[, c('age_mri', 'BMIperc', 'PubCat')]))
+Cov2 <- as.matrix(final_df[, c('black', 'white')])
+Cov <- cbind(Cov1, Cov2)
 
 # X: violence, 1=Yes, 0=No - vector
 # Y: depression score - vector
 # M1: Immune variables - matrix where each row is a person, and each column is a region
 # M2: Amygdala connectivity - matrix where each row is a person, and each column is a region
+
 ##################################
+
+# Regress out
+Y <- lm(Y ~ Cov[, 'age_mri'] + Cov[, 'BMIperc'] + Cov[, 'PubCat'] + Cov[, 'black'] + Cov[, 'white'])$residuals
+
+for (m1 in 1:ncol(M1)) {
+  M1[, m1] <- lm(M1[, m1] ~ Cov[, 'age_mri'] + Cov[, 'BMIperc'] + Cov[, 'PubCat'] + Cov[, 'black'] + Cov[, 'white'])$residuals
+}
+
+for (m2 in 1:ncol(M2)) {
+  M2[, m2] <- lm(M2[, m2] ~ Cov[, 'age_mri'] + Cov[, 'BMIperc'] + Cov[, 'PubCat'] + Cov[, 'black'] + Cov[, 'white'])$residuals
+}
 
 ##################################
 # method parameters
@@ -123,8 +146,4 @@ for(ss in 1:length(mu.prod))
 
 warnings()
 
-saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long.rds')
-
-write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_scaled_long.csv')
-write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_scaled_long.csv')
-write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_scaled_long.csv')
+saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_regress.rds')
