@@ -226,3 +226,18 @@ for (m in 1:length(kappa1)) {
 }
 
 ######################## Optimal model according to BIC? #######################
+
+bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE),] # eek
+
+# What are the non-zero paths?
+
+p <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'p']
+m <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'm']
+
+re_long[[p]][[m]]$IE.M2[re_long[[p]][[m]]$IE.M2 != 0] #M2.1, M2.32, M2.35, M2.294 
+
+
+
+
+
+#
