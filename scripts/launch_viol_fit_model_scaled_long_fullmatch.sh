@@ -11,9 +11,9 @@
 #SBATCH --mail-type=FAIL                                  ## you can receive e-mail alerts from SLURM when your job begins and when your job finishes (completed, failed, etc)
 #SBATCH --mail-user=ellynbutler2027@u.northwestern.edu    ## your email
 
-Rscript /projects/b1108/projects/violence_mediation/scripts/viol_fit_model_scaled_long.R
+Rscript /projects/b1108/projects/violence_mediation/scripts/viol_fit_model_scaled_long_fullmatch.R
 
-# sbatch -o /projects/b1108/projects/violence_mediation/launch/viol_fit_scaled_long_fulldata.txt /projects/b1108/projects/violence_mediation/scripts/launch_viol_fit_model_scaled_long.sh
+# sbatch -o /projects/b1108/projects/violence_mediation/launch/viol_fit_scaled_long_fulldata_fullmatch.txt /projects/b1108/projects/violence_mediation/scripts/launch_viol_fit_model_scaled_long_fullmatch.sh
 
 
 # TO DO: Increase time?
