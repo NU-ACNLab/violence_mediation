@@ -1,7 +1,7 @@
 ### This script fits the basic mediation model
 ###
 ### Ellyn Butler
-### May 17, 2022 - July 19, 2022
+### May 17, 2022 - October 31, 2022
 
 
 rm(list=ls())
@@ -10,24 +10,27 @@ rm(list=ls())
 source("/projects/b1108/projects/multimodal_integration/PathLasso.R")
 
 # load data
-viol_df <- read.csv('/projects/b1108/projects/violence_mediation/data/violence.csv')
-dep_df <- read.csv('/projects/b1108/projects/violence_mediation/data/dep_immune.csv')
-mono_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/immune/monocytes.csv')
-amyg_df <- read.csv('/projects/b1108/projects/violence_mediation/data/amygconn_2021-12-12.csv')
+viol_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/violence/violence_2022-10-06.csv')
+immune_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/immune/immune_2022-10-06.csv')
+dep_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/clinical/depanx_2022-10-04.csv')
+amyg_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/neuroimaging/tabulated/amygconn_2022-10-31.csv')
 
-final_df <- merge(viol_df, dep_df, by=c('subid', 'sesid'))
-final_df <- merge(final_df, mono_df, by=c('subid', 'sesid'))
+final_df <- merge(viol_df, immune_df, by=c('subid', 'sesid'))
+final_df <- merge(final_df, dep_df, by=c('subid', 'sesid'))
 final_df <- merge(final_df, amyg_df, by=c('subid', 'sesid'))
 
 final_df <- final_df[!is.na(final_df$ever) & !is.na(final_df$RCADS_sum) &
   final_df$sesid == 1 & !is.na(final_df$IL6) & !is.na(final_df$ClassicalMono) &
-  !is.na(final_df$NonClassicalMono), ]
+  !is.na(final_df$NonClassicalMono) & !is.na(final_df$Neutrophils) &
+  !is.na(final_df$Lymphocytes) & !is.na(final_df$Eosinophils) &
+  !is.na(final_df$Basophils), ]
 
 X <- final_df$ever
 Y <- scale(final_df$RCADS_sum)
 M1 <- scale(as.matrix(final_df[, c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR',
-                              'ClassicalMono', 'NonClassicalMono')]))
-M2 <- scale(as.matrix(final_df[, paste0('region', 1:300)])) # change to c(1:243, 246:300)
+                              'ClassicalMono', 'NonClassicalMono', 'Neutrophils',
+                              'Lymphocytes', 'Eosinophils', 'Basophils')]))
+M2 <- scale(as.matrix(final_df[, paste0('region', c(1:243, 246:300))]))
 
 # X: violence, 1=Yes, 0=No - vector
 # Y: depression score - vector
@@ -123,8 +126,8 @@ for(ss in 1:length(mu.prod))
 
 warnings()
 
-saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long.rds')
+saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata.rds')
 
-write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_scaled_long.csv')
-write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_scaled_long.csv')
-write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_scaled_long.csv')
+write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_scaled_long_fulldata.csv')
+write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_scaled_long_fulldata.csv')
+write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_scaled_long_fulldata.csv')
