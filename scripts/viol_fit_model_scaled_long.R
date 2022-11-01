@@ -25,12 +25,31 @@ final_df <- final_df[!is.na(final_df$ever) & !is.na(final_df$RCADS_sum) &
   !is.na(final_df$Lymphocytes) & !is.na(final_df$Eosinophils) &
   !is.na(final_df$Basophils), ]
 
+# Identify amygconn variables with NAs (because didn't make it into mask)
+regs_df <- data.frame(reg=paste0('region', c(1:243, 246:300)),
+                      num_nas=NA)
+for (reg in regs_df$reg) {
+  regs_df[regs_df$reg == reg, 'num_nas'] <- sum(is.na(final_df[, reg]))
+}
+
+# Remove amygconn variables that have more than 16 subjects with NAs
+largena_vars <- regs_df[regs_df$num_nas > 16, 'reg']
+final_df <- final_df[, !(names(final_df) %in% largena_vars)]
+
+# Remove subjects that still have NAs in amygconn
+immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
+            'NonClassicalMono', 'Neutrophils', 'Lymphocytes', 'Eosinophils',
+            'Basophils')
+remaining_regs <- names(final_df)[names(final_df) %in% regs_df$reg]
+final_df <- final_df[, c('ever', 'RCADS_sum', immune, remaining_regs)]
+final_df <- na.omit(final_df)
+dim(final_df)
+
+# Get the final matrices
 X <- final_df$ever
 Y <- scale(final_df$RCADS_sum)
-M1 <- scale(as.matrix(final_df[, c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR',
-                              'ClassicalMono', 'NonClassicalMono', 'Neutrophils',
-                              'Lymphocytes', 'Eosinophils', 'Basophils')]))
-M2 <- scale(as.matrix(final_df[, paste0('region', c(1:243, 246:300))]))
+M1 <- scale(as.matrix(final_df[, immune]))
+M2 <- scale(as.matrix(final_df[, remaining_regs]))
 
 # X: violence, 1=Yes, 0=No - vector
 # Y: depression score - vector
