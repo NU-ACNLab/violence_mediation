@@ -2,7 +2,7 @@
 ### the association between violence and internalizing symptoms are highlighted
 ###
 ### Ellyn Butler
-### August 22, 2022 - November 3, 2022
+### August 22, 2022 - August 23, 2022
 
 from nilearn import plotting
 
@@ -12,32 +12,22 @@ from nilearn import plotting
 
 ###### IE.M2
 
-#    matnames  regnames
-#44     M2.44  region46 -49.47_-11.06_34.95
-#67     M2.67  region69 -52.92_-21.83_22.97
-#126   M2.126 region129 49.26_35.47_-12.20
-#136   M2.136 region139 1.75_-24.25_30.36
-#139   M2.139 region142 7.98_-91.08_-7.10
-#171   M2.171 region174 42.52_-78.17_-11.78
-#234   M2.234 region237 24.73_-11.25_-22.68
-#256   M2.256 region261 -18.84_-5.08_-3.06
-#271   M2.271 region281 -5.72_-50.80_-40.84
+#M2.1, M2.32, M2.35, M2.294
+
+# 1: -56.16_-44.76_-24.23
+# 32: 10.09_-17.10_74.14
+# 35: 22.45_-42.29_68.99
+# 294: -33.00_-51.00_-50.00
 
 med_coords = [(19.51, -1.85, -23.11),
               (-20.3, -2.27, -22.21),
-              (-49.47, -11.06, 34.95),
-              (-52.92, -21.83, 22.97),
-              (49.26, 35.47, -12.20),
-              (1.75, -24.25, 30.36),
-              (7.98, -91.08, -7.10),
-              (42.52, -78.17, -11.78),
-              (24.73, -11.25, -22.68),
-              (-18.84, -5.08, -3.06),
-              (-5.72, -50.80, -40.84)]
+              (-56.16, -44.76, -24.23),
+              (10.09, -17.10, 74.14),
+              (22.45, -42.29, 68.99),
+              (-33.00, -51.00, -50.00)]
 
 view = plotting.view_markers(
-    med_coords, ['red', 'red', 'black', 'black', 'black', 'black', 'black',
-        'black', 'black', 'black', 'black'], marker_size=12)
+    med_coords, ['red', 'red', 'black', 'black', 'black', 'black'], marker_size=12)
 
 view.open_in_browser()
 
