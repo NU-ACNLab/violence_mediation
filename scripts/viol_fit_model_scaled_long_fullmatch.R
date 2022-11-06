@@ -20,11 +20,17 @@ final_df <- merge(final_df, demo_df)
 full_match <- matchit(ever ~ black + white + otherrace + age_mri + female + PubCat + IPR,
                          data=final_df, method='full', interactive=FALSE)
 
+# get data types
+immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
+            'NonClassicalMono', 'Neutrophils', 'Lymphocytes', 'Eosinophils',
+            'Basophils')
+regs <- grep('region', names(final_df), value=TRUE)
+
 # Get the final matrices
 X <- final_df$ever*sqrt(full_match$weights)
 Y <- scale(final_df$RCADS_sum)*sqrt(full_match$weights)
 M1 <- scale(as.matrix(final_df[, immune]))*sqrt(full_match$weights)
-M2 <- scale(as.matrix(final_df[, remaining_regs]))*sqrt(full_match$weights)
+M2 <- scale(as.matrix(final_df[, regs]))*sqrt(full_match$weights)
 
 # X: violence, 1=Yes, 0=No - vector
 # Y: depression score - vector

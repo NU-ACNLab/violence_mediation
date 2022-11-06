@@ -10,16 +10,20 @@ rm(list=ls())
 source("/projects/b1108/projects/multimodal_integration/PathLasso.R")
 
 # load data
-basedir <- '/projects/b1108/studies/mwmh/data/processed/'
-
 final_df <- read.csv('/projects/b1108/projects/violence_mediation/data/combined_data.csv')
 dim(final_df)
+
+# get data types
+immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
+            'NonClassicalMono', 'Neutrophils', 'Lymphocytes', 'Eosinophils',
+            'Basophils')
+regs <- grep('region', names(final_df), value=TRUE)
 
 # Get the final matrices
 X <- final_df$ever
 Y <- scale(final_df$RCADS_sum)
 M1 <- scale(as.matrix(final_df[, immune]))
-M2 <- scale(as.matrix(final_df[, remaining_regs]))
+M2 <- scale(as.matrix(final_df[, regs]))
 
 # X: violence, 1=Yes, 0=No - vector
 # Y: depression score - vector
