@@ -33,7 +33,7 @@ for (reg in regs_df1$reg) {
 }
 
 # Remove amygconn variables that have more than 16 subjects with NAs
-largena_vars <- regs_df1[regs_df1$num_nas > 16, 'reg']
+largena_vars1 <- regs_df1[regs_df1$num_nas > 16, 'reg']
 final_df1 <- final_df1[, !(names(final_df1) %in% largena_vars1)]
 
 # Remove subjects that still have NAs in amygconn
@@ -66,8 +66,8 @@ for (reg in regs_df2$reg) {
   regs_df2[regs_df2$reg == reg, 'num_nas'] <- sum(is.na(final_df2[, reg]))
 }
 
-# Remove amygconn variables that you removed the first time - decide on a threshold
-final_df2 <- final_df2[, !(names(final_df2) %in% largena_vars)]
+# Remove amygconn variables that you removed the first time
+final_df2 <- final_df2[, !(names(final_df2) %in% largena_vars1)]
 
 # Remove subjects that still have NAs in amygconn
 immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
@@ -92,7 +92,7 @@ final_df3 <- merge(final_df3, amyg_df2, by=c('subid', 'sesid'))
 final_df3 <- final_df3[!is.na(final_df3$ever) & final_df3$sesid == 1, ]
 nrow(final_df3)
 
-final_df3 <- final_df3[!is.na(final_df3$RCADS_sum) , ]
+final_df3 <- final_df3[!is.na(final_df3$RCADS_sum), ]
 nrow(final_df3)
 
 final_df3 <- final_df3[!is.na(final_df3$IL6) & !is.na(final_df3$ClassicalMono) &
@@ -109,8 +109,8 @@ for (reg in regs_df3$reg) {
 }
 
 # Remove amygconn variables that you removed the first time - decide on a threshold
-largena_vars3 <- regs_df3[regs_df3$num_nas > 10, 'reg']
-final_df3 <- final_df3[, !(names(final_df3) %in% largena_vars)]
+largena_vars3 <- regs_df3[regs_df3$num_nas > 9, 'reg']
+final_df3 <- final_df3[, !(names(final_df3) %in% largena_vars3)]
 
 # Remove subjects that still have NAs in amygconn
 immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',

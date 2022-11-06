@@ -27,40 +27,20 @@ library('MatchIt') # v 4.4.0
 
 ################################### Load data ##################################
 
-basedir <- '/projects/b1108/studies/mwmh/data/'
+basedir <- '/projects/b1108/studies/mwmh/data/processed/'
 
-img_df <- read.csv(paste0(basedir, 'raw/neuroimaging/meta/bids_10-06-2022.csv'))
+final_df <- read.csv('/projects/b1108/projects/violence_mediation/data/combined_data.csv')
+demo_df <- read.csv(paste0(basedir, 'demographic/demographics_2022-10-04.csv'))
+final_df <- merge(final_df, demo_df)
+nrow(final_df) #248
 
-##### Get the sessions that have at least one type of fmri scan
-img_df <- img_df[which(img_df$rest == 1 | img_df$avoid == 1 | img_df$faces == 1), ]
 
-demo_df <- read.csv(paste0(basedir, 'processed/demographic/demographics_2022-10-04.csv'))
-depanx_df <- read.csv(paste0(basedir, 'processed/clinical/depanx_2022-10-04.csv'))
-immune_df <- read.csv(paste0(basedir, 'processed/immune/immune_2022-10-06.csv'))
-viol_df <- read.csv(paste0(basedir, 'processed/violence/violence_2022-10-06.csv'))
-
-##### Merge
-df_list <- list(img_df, demo_df, depanx_df, immune_df, viol_df)
-final_df <- Reduce(function(x, y) merge(x, y), df_list)
-nrow(final_df) #488
-
-##### Filter for the first time point
-final_df <- final_df[which(final_df$sesid == 1), ]
-nrow(final_df) #260
-
-##### Filter out rows with missing violence or immune data
+##### Filter out rows with missing violence or immune data... all present
 final_df <- final_df[which(!is.na(final_df$black) & !is.na(final_df$white) &
                       !is.na(final_df$otherrace) & !is.na(final_df$black) &
                       !is.na(final_df$black) & !is.na(final_df$age_mri) &
-                      !is.na(final_df$female) & !is.na(final_df$IPR) &
-                      !is.na(final_df$RCADS_sum) & !is.na(final_df$IL10) &
-                      !is.na(final_df$IL6) & !is.na(final_df$IL8) &
-                      !is.na(final_df$TNFa) & !is.na(final_df$CRP) &
-                      !is.na(final_df$uPAR) & !is.na(final_df$ClassicalMono) &
-                      !is.na(final_df$NonClassicalMono) & !is.na(final_df$Neutrophils) &
-                      !is.na(final_df$Lymphocytes) & !is.na(final_df$Eosinophils) &
-                      !is.na(final_df$Basophils) & !is.na(final_df$ever)), ]
-nrow(final_df) #256
+                      !is.na(final_df$female) & !is.na(final_df$IPR)), ]
+nrow(final_df) #248
 
 ##### Select relevant columns for matching (violence + covariates)
 final_df <- final_df[, c('subid', 'ever', 'black', 'white', 'otherrace', 'age_mri',

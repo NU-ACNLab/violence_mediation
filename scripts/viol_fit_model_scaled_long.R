@@ -1,7 +1,7 @@
 ### This script fits the basic mediation model
 ###
 ### Ellyn Butler
-### May 17, 2022 - October 31, 2022
+### May 17, 2022 - November 6, 2022
 
 
 rm(list=ls())
@@ -10,39 +10,9 @@ rm(list=ls())
 source("/projects/b1108/projects/multimodal_integration/PathLasso.R")
 
 # load data
-viol_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/violence/violence_2022-10-06.csv')
-immune_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/immune/immune_2022-10-06.csv')
-dep_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/clinical/depanx_2022-10-04.csv')
-amyg_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/neuroimaging/tabulated/amygconn_2022-10-31.csv')
+basedir <- '/projects/b1108/studies/mwmh/data/processed/'
 
-final_df <- merge(viol_df, immune_df, by=c('subid', 'sesid'))
-final_df <- merge(final_df, dep_df, by=c('subid', 'sesid'))
-final_df <- merge(final_df, amyg_df, by=c('subid', 'sesid'))
-
-final_df <- final_df[!is.na(final_df$ever) & !is.na(final_df$RCADS_sum) &
-  final_df$sesid == 1 & !is.na(final_df$IL6) & !is.na(final_df$ClassicalMono) &
-  !is.na(final_df$NonClassicalMono) & !is.na(final_df$Neutrophils) &
-  !is.na(final_df$Lymphocytes) & !is.na(final_df$Eosinophils) &
-  !is.na(final_df$Basophils), ]
-
-# Identify amygconn variables with NAs (because didn't make it into mask)
-regs_df <- data.frame(reg=paste0('region', c(1:243, 246:300)),
-                      num_nas=NA)
-for (reg in regs_df$reg) {
-  regs_df[regs_df$reg == reg, 'num_nas'] <- sum(is.na(final_df[, reg]))
-}
-
-# Remove amygconn variables that have more than 16 subjects with NAs
-largena_vars <- regs_df[regs_df$num_nas > 16, 'reg']
-final_df <- final_df[, !(names(final_df) %in% largena_vars)]
-
-# Remove subjects that still have NAs in amygconn
-immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
-            'NonClassicalMono', 'Neutrophils', 'Lymphocytes', 'Eosinophils',
-            'Basophils')
-remaining_regs <- names(final_df)[names(final_df) %in% regs_df$reg]
-final_df <- final_df[, c('ever', 'RCADS_sum', immune, remaining_regs)]
-final_df <- na.omit(final_df)
+final_df <- read.csv('/projects/b1108/projects/violence_mediation/data/combined_data.csv')
 dim(final_df)
 
 # Get the final matrices
@@ -146,7 +116,3 @@ for(ss in 1:length(mu.prod))
 warnings()
 
 saveRDS(re, '/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata.rds')
-
-write.csv(re[[1]][[1]]$IE.M1M2, '/projects/b1108/projects/violence_mediation/models/IE_M1M2_scaled_long_fulldata.csv')
-write.csv(re[[1]][[1]]$IE.M1, '/projects/b1108/projects/violence_mediation/models/IE_M1_scaled_long_fulldata.csv')
-write.csv(re[[1]][[1]]$IE.M2, '/projects/b1108/projects/violence_mediation/models/IE_M2_scaled_long_fulldata.csv')
