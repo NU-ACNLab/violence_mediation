@@ -1,7 +1,7 @@
 ### This script fits the basic mediation model
 ###
 ### Ellyn Butler
-### October 31, 2022
+### October 31, 2022 - November 6, 2022
 
 
 rm(list=ls())
@@ -14,7 +14,7 @@ library('MatchIt')
 basedir <- '/projects/b1108/studies/mwmh/data/processed/'
 
 final_df <- read.csv('/projects/b1108/projects/violence_mediation/data/combined_data.csv')
-demo_df <- read.csv(paste0(basedir, 'demographic/demographics_2022-10-04.csv'))
+demo_df <- read.csv(paste0(basedir, 'demographic/demographics_2022-11-07.csv'))
 final_df <- merge(final_df, demo_df)
 
 full_match <- matchit(ever ~ black + white + otherrace + age_mri + female + PubCat + IPR,
