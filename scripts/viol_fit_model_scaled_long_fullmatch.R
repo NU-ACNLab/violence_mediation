@@ -1,4 +1,4 @@
-### This script fits the basic mediation model
+### This script fits the matched mediation model
 ###
 ### Ellyn Butler
 ### October 31, 2022 - November 6, 2022
