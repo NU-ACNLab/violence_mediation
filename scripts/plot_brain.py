@@ -33,6 +33,25 @@ view = plotting.view_markers(
 
 view.open_in_browser()
 
+# Just hippocampus
+med_coords = [(19.51, -1.85, -23.11),
+              (-20.3, -2.27, -22.21),
+              (24.73, -11.25, -22.68)]
+
+view = plotting.view_markers(
+    med_coords, ['red', 'red', 'black'], marker_size=12)
+
+view.open_in_browser()
+
+# Just pallidum
+med_coords = [(19.51, -1.85, -23.11),
+              (-20.3, -2.27, -22.21),
+              (-18.84, -5.08, -3.06)]
+
+view = plotting.view_markers(
+    med_coords, ['red', 'red', 'black'], marker_size=12)
+
+view.open_in_browser()
 
 ###### IE.M2 Full match
 
@@ -46,7 +65,7 @@ view.open_in_browser()
 #248   M2.248 region252 28.56_-7.53_7.66        putamen
 #257   M2.257 region261 -18.84_-5.08_-3.06      pallidum
 
-reg_coords = [(19.51, -1.85, -23.11),
+full_coords = [(19.51, -1.85, -23.11),
               (-20.3, -2.27, -22.21),
               (-24.66, -97.84, -12.33),
               (-46.68, -50.91, -20.91),
@@ -58,7 +77,7 @@ reg_coords = [(19.51, -1.85, -23.11),
               (-18.84, -5.08, -3.06)]
 
 view = plotting.view_markers(
-    reg_coords, ['red', 'red', 'black', 'black', 'slateblue', 'slateblue',
+    full_coords, ['red', 'red', 'black', 'black', 'slateblue', 'slateblue',
     'slateblue', 'slateblue', 'slateblue', 'slateblue'], marker_size=12)
 
 view.open_in_browser()

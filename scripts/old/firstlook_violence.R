@@ -77,9 +77,6 @@ corr_ever_plot
 dev.off()
 
 
-
-# To Do: Clean past year data
-
 ################################ Sanity Checks ################################
 
 # There shouldn't be any of these cases if they were in fact asked about "ever"
