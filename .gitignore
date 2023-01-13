@@ -7,5 +7,6 @@ abstracts/*
 models/*
 notes/*
 launch/*
+talks/*
 *.rds
 *.csv

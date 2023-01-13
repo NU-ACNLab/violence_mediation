@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=p31521                                  ## YOUR ACCOUNT pXXXX or bXXXX
+#SBATCH --account=p12345                                  ## YOUR ACCOUNT pXXXX or bXXXX
 #SBATCH --partition=long                                  ## PARTITION (buyin, short, normal, w10001, etc)
 #SBATCH --array=1                                         ## number of jobs to run "in parallel"
 #SBATCH --nodes=1                                         ## how many computers do you need
