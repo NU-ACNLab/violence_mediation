@@ -8,6 +8,7 @@ df <- read.csv('/projects/b1108/projects/violence_mediation/data/combined_data.c
 
 df <- df[, c('subid', 'ever', 'RCADS_sum', 'IL10', paste0('region', c(2, 14, 237, 261, 281)))]
 df[, c('RCADS_sum', 'IL10', paste0('region', c(2, 14, 237, 261, 281)))] <- scale(df[, c('RCADS_sum', 'IL10', paste0('region', c(2, 14, 237, 261, 281)))])
+#df$ever <- df$ever - mean(df$ever) #unnecessary
 
 m1_x_mod <- lm(IL10 ~ ever, data=df)
 
@@ -29,7 +30,7 @@ betatheta <- m1_x_mod$coefficients[['ever']]*y_xm1m2_mod$coefficients[['IL10']]
 zetapi_2 <- m2.2_xm1_mod$coefficients[['ever']]*y_xm1m2_mod$coefficients[['region2']]
 # Minimally penalized:  -0.2019, -0.0186
 # Unpenalized:          -0.2501, 0.1288
-# ^ sign flipped... why?
+# ^ sign flipped... why? TO DO: Double check that I selected the correct coefficient
 # A: Possibly because we aren't controlling for all the other M2 variables?
 # Significance: -/+, +
 
