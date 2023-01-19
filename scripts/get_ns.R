@@ -1,62 +1,54 @@
-### Merge all data types for final sample
+### This script gets the Ns and sample characteristics before and after exclusions
 ###
 ### Ellyn Butler
-### November 3, 2022
-
+### January 18, 2022
 
 # load data
 basedir <- '/projects/b1108/studies/mwmh/data/processed/'
 viol_df <- read.csv(paste0(basedir, 'violence/violence_2022-10-06.csv'))
+viol_df <- viol_df[viol_df$sesid == 1, ]
 immune_df <- read.csv(paste0(basedir, 'immune/immune_2022-10-06.csv'))
+immune_df <- immune_df[immune_df$sesid == 1, ]
 dep_df <- read.csv(paste0(basedir, 'clinical/depanx_2022-10-04.csv'))
+dep_df <- dep_df[dep_df$sesid == 1, ]
 amyg_df2 <- read.csv(paste0(basedir, 'neuroimaging/tabulated/amygconn_2022-11-03.csv'))
+amyg_df2 <- amyg_df2[amyg_df2$sesid == 1, ]
+
+demo_df <- read.csv('/projects/b1108/studies/mwmh/data/processed/demographic/demographics_2022-10-04.csv')
 
 
-########################### naning out with any nans ###########################
+# Filter for first time point
+first_df <- demo_df[which(demo_df$sesid == 1), ]
 
-final_df1 <- merge(viol_df, immune_df, by=c('subid', 'sesid'))
-final_df1 <- merge(final_df1, dep_df, by=c('subid', 'sesid'))
-final_df1 <- merge(final_df1, amyg_df1, by=c('subid', 'sesid'))
+# Remove if they don't have an age for lab or MRI (like they were never in the study)
+first_df <- first_df[!is.na(first_df$age_lab) & !is.na(first_df$age_mri),] #277!
 
-final_df1 <- final_df1[!is.na(final_df1$ever) & !is.na(final_df1$RCADS_sum) &
-  final_df1$sesid == 1 & !is.na(final_df1$IL6) & !is.na(final_df1$ClassicalMono) &
-  !is.na(final_df1$NonClassicalMono) & !is.na(final_df1$Neutrophils) &
-  !is.na(final_df1$Lymphocytes) & !is.na(final_df1$Eosinophils) &
-  !is.na(final_df1$Basophils), ]
+################################ Pre-exclusions ################################
 
-# Identify amygconn variables with NAs (because didn't make it into mask)
-regs_df1 <- data.frame(reg=paste0('region', c(1:243, 246:300)),
-                      num_nas=NA)
-for (reg in regs_df1$reg) {
-  regs_df1[regs_df1$reg == reg, 'num_nas'] <- sum(is.na(final_df1[, reg]))
-}
+sum(first_df$female)/nrow(first_df)
 
-# Remove amygconn variables that have more than 16 subjects with NAs
-largena_vars1 <- regs_df1[regs_df1$num_nas > 16, 'reg']
-final_df1 <- final_df1[, !(names(final_df1) %in% largena_vars1)]
-
-# Remove subjects that still have NAs in amygconn
-immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
-            'NonClassicalMono', 'Neutrophils', 'Lymphocytes', 'Eosinophils',
-            'Basophils')
-remaining_regs <- names(final_df1)[names(final_df1) %in% regs_df1$reg]
-final_df1 <- final_df1[, c('subid', 'sesid', 'ever', 'RCADS_sum', immune, remaining_regs)]
-final_df1 <- na.omit(final_df1)
-dim(final_df1)
+mean(first_df$age_mri)
+sd(first_df$age_mri)
+#mean(first_df$age_lab)
+#sd(first_df$age_lab)
 
 
-############################# naning out only nans #############################
+################################ Post-exclusions ###############################
 
 ########### Old threshold - sanity check
-final_df2 <- merge(viol_df, immune_df, by=c('subid', 'sesid'))
-final_df2 <- merge(final_df2, dep_df, by=c('subid', 'sesid'))
-final_df2 <- merge(final_df2, amyg_df2, by=c('subid', 'sesid'))
-
-final_df2 <- final_df2[!is.na(final_df2$ever) & !is.na(final_df2$RCADS_sum) &
-  final_df2$sesid == 1 & !is.na(final_df2$IL6) & !is.na(final_df2$ClassicalMono) &
+final_df1 <- merge(first_df, viol_df)
+final_df1 <- final_df1[!is.na(final_df1$ever), ] # one missing violence data (276)
+final_df2 <- merge(first_df, immune_df)
+final_df2 <- final_df2[!is.na(final_df2$IL6) & !is.na(final_df2$ClassicalMono) &
   !is.na(final_df2$NonClassicalMono) & !is.na(final_df2$Neutrophils) &
   !is.na(final_df2$Lymphocytes) & !is.na(final_df2$Eosinophils) &
-  !is.na(final_df2$Basophils), ]
+  !is.na(final_df2$Basophils), ] # four missing immune data (273)
+final_df3 <- merge(first_df, dep_df)
+final_df3 <- final_df3[!is.na(final_df3$RCADS_sum), ] # none missing internalizing data (277)
+final_df4 <- merge(first_df, amyg_df2) # 22 missing imaging data (255)
+
+final_dfs <- list(first_df, viol_df, immune_df, amyg_df2, dep_df)
+final_df <- Reduce(function(...) merge(...), final_dfs)
 
 # Identify amygconn variables with NAs (because didn't make it into mask)
 regs_df2 <- data.frame(reg=paste0('region', c(1:243, 246:300)),
@@ -66,7 +58,7 @@ for (reg in regs_df2$reg) {
 }
 
 # Remove amygconn variables that you removed the first time
-final_df2 <- final_df2[, !(names(final_df2) %in% largena_vars1)]
+final_df2 <- final_df[, !(names(final_df) %in% largena_vars1)]
 
 # Remove subjects that still have NAs in amygconn
 immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
@@ -119,12 +111,3 @@ remaining_regs <- names(final_df3)[names(final_df3) %in% regs_df3$reg]
 final_df3 <- final_df3[, c('subid', 'sesid', 'ever', 'RCADS_sum', immune, remaining_regs)]
 final_df3 <- na.omit(final_df3)
 dim(final_df3)
-
-write.csv(final_df3, '/projects/b1108/projects/violence_mediation/data/combined_data.csv', row.names=FALSE)
-
-
-
-
-
-
-#
