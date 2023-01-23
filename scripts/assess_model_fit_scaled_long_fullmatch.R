@@ -2,7 +2,7 @@
 ### mediation models, and summarizes the hyper-parameters and log likelihoods
 ###
 ### Ellyn Butler
-### November 17, 2022
+### November 17, 2022 - January 23, 2023
 
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
