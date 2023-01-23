@@ -2,7 +2,7 @@
 ### mediation models, and summarizes the hyper-parameters and log likelihoods
 ###
 ### Ellyn Butler
-### November 17, 2022
+### January 20, 2022
 
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
@@ -12,7 +12,7 @@ logn = log(nrow(final_df))
 
 ################################## Full Model ##################################
 
-re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata_fullmatch.rds')
+re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata_nonzeroedout.rds')
 
 full_df <- expand.grid(kappa1, mu.prod)
 names(full_df) <- c('kappa1', 'muprod')
@@ -82,9 +82,8 @@ for (m in 1:length(kappa1)) {
     bic_df[q, 'carda3'] <- sum(re_long[[p]][[m]]$IE.M1M2 != 0)
     bic_df[q, 'bic'] <- bic_df[q, 'neg2loglik'] + logn*(bic_df[q, 'carda1'] + bic_df[q, 'carda2'] + bic_df[q, 'carda3'])
 
-    q = q+1
   }
-  #q = q+1... OOPS (January 23, 2023)
+  q = q+1
 }
 
 ######################## Optimal model according to BIC? #######################
@@ -100,31 +99,25 @@ important_regs <- re_long[[p]][[m]]$IE.M2[re_long[[p]][[m]]$IE.M2 != 0]
 
 # Effect sizes
 re_long[[1]][[1]]$IE.M1[names(important_immune)]
-# M1.1
-# 0.001756765
+#       M1.1
+#0.006553306
 re_long[[1]][[1]]$IE.M2[names(important_regs)]
-# M2.2        M2.12       M2.116       M2.130       M2.188       M2.235
-# 0.003796597 -0.082205693 -0.052561131 -0.053436294 -0.028493162  0.139652100
-# M2.248       M2.257
-# 0.023960599  0.024509353
+#        M2.2        M2.12       M2.235       M2.257       M2.274
+# 0.003744796 -0.087345027  0.139565645  0.028881367 -0.048287221
 
 # X -> M1 -> Y
 re_long[[1]][[1]]$beta[,names(important_immune)]
-#0.170415
+#0.1813547
 re_long[[1]][[1]]$theta[names(important_immune),]
-#0.01030875
+#0.0361353
 
 # X -> M2 -> Y
 re_long[[1]][[1]]$zeta[,names(important_regs)]
-#      M2.2      M2.12     M2.116     M2.130     M2.188     M2.235     M2.248
-#-0.1390642  0.1797810  0.2130487  0.1785623  0.1994847  0.3016011  0.2112760
-#    M2.257
-#-0.1579374
+#M2.2      M2.12     M2.235     M2.257     M2.274
+#-0.2018542  0.1920313  0.2984655 -0.1921725 -0.2939074
 re_long[[1]][[1]]$pi[names(important_regs),]
-#       M2.2       M2.12      M2.116      M2.130      M2.188      M2.235
-#-0.02730104 -0.45725459 -0.24670948 -0.29925852 -0.14283380  0.46303581
-#     M2.248      M2.257
-# 0.11340899 -0.15518400
+#       M2.2       M2.12      M2.235      M2.257      M2.274
+#-0.01855199 -0.45484779  0.46761072 -0.15028880  0.16429398
 
 # Region mapping
 map_df <- data.frame(matnames = names(re_long[[p]][[m]]$IE.M2),

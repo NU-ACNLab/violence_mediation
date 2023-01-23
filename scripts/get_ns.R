@@ -3,6 +3,10 @@
 ### Ellyn Butler
 ### January 18, 2022
 
+#library(tableone)
+#library(flextable)
+library(table1) #https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html
+
 # load data
 basedir <- '/projects/b1108/studies/mwmh/data/processed/'
 viol_df <- read.csv(paste0(basedir, 'violence/violence_2022-10-06.csv'))
@@ -50,31 +54,6 @@ final_df4 <- merge(first_df, amyg_df2) # 22 missing imaging data (255)
 final_dfs <- list(first_df, viol_df, immune_df, amyg_df2, dep_df)
 final_df <- Reduce(function(...) merge(...), final_dfs)
 
-# Identify amygconn variables with NAs (because didn't make it into mask)
-regs_df2 <- data.frame(reg=paste0('region', c(1:243, 246:300)),
-                      num_nas=NA)
-for (reg in regs_df2$reg) {
-  regs_df2[regs_df2$reg == reg, 'num_nas'] <- sum(is.na(final_df2[, reg]))
-}
-
-# Remove amygconn variables that you removed the first time
-final_df2 <- final_df[, !(names(final_df) %in% largena_vars1)]
-
-# Remove subjects that still have NAs in amygconn
-immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
-            'NonClassicalMono', 'Neutrophils', 'Lymphocytes', 'Eosinophils',
-            'Basophils')
-remaining_regs <- names(final_df2)[names(final_df2) %in% regs_df2$reg]
-final_df2 <- final_df2[, c('subid', 'sesid', 'ever', 'RCADS_sum', immune, remaining_regs)]
-final_df2 <- na.omit(final_df2)
-dim(final_df2)
-
-# Compare
-names(regs_df1) <- c('reg', 'num_nas1')
-names(regs_df2) <- c('reg', 'num_nas2')
-regs_df <- merge(regs_df1, regs_df2)
-
-
 ########### Final
 final_df3 <- merge(viol_df, immune_df, by=c('subid', 'sesid'))
 final_df3 <- merge(final_df3, dep_df, by=c('subid', 'sesid'))
@@ -111,3 +90,19 @@ remaining_regs <- names(final_df3)[names(final_df3) %in% regs_df3$reg]
 final_df3 <- final_df3[, c('subid', 'sesid', 'ever', 'RCADS_sum', immune, remaining_regs)]
 final_df3 <- na.omit(final_df3)
 dim(final_df3)
+
+final_df3 <- merge(final_df3, first_df)
+
+sum(final_df3$female)/nrow(final_df3)
+
+mean(final_df3$age_mri)
+sd(final_df3$age_mri)
+
+mean(final_df3$days_mri_minus_lab)
+sd(final_df3$days_mri_minus_lab)
+
+final_df3$female <- as.factor(final_df3$female)
+final_df3$black <- as.factor(final_df3$black)
+final_df3$white <- as.factor(final_df3$white)
+
+table1(~ age_mri + female + black + white + BMIperc + PubCat | ever, data=final_df3)
