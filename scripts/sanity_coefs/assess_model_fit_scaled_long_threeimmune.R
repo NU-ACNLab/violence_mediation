@@ -12,7 +12,7 @@ logn = log(nrow(final_df))
 
 ################################## Full Model ##################################
 
-re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata_twoimmune.rds')
+re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata_threeimmune.rds')
 
 full_df <- expand.grid(kappa1, mu.prod)
 names(full_df) <- c('kappa1', 'muprod')
@@ -130,7 +130,7 @@ important_df <- map_df[map_df$matnames %in% names(important_regs), ]
 
 ############################# Get model of interest ############################
 
-# Model that includes two immune variables?
+# Model that includes three immune variables?
 unique(bic_df$carda1)
 carda1_df <- bic_df[which(bic_df$carda1 == 3), ]
 

@@ -14,7 +14,7 @@ final_df <- read.csv('/projects/b1108/projects/violence_mediation/data/combined_
 dim(final_df)
 
 # get data types
-immune <- c('IL10', 'Basophils')
+immune <- c('IL10', 'Neutrophils', 'Basophils')
 regs <- c('region2', 'region14', 'region237', 'region261', 'region281')
 
 # Get the final matrices
