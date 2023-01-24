@@ -2,7 +2,7 @@
 ### mediation models, and summarizes the hyper-parameters and log likelihoods
 ###
 ### Ellyn Butler
-### January 23, 2023
+### January 24, 2023
 
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
@@ -12,7 +12,7 @@ logn = log(nrow(final_df))
 
 ################################## Full Model ##################################
 
-re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata.rds')
+re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata_twoimmune.rds')
 
 full_df <- expand.grid(kappa1, mu.prod)
 names(full_df) <- c('kappa1', 'muprod')
@@ -54,8 +54,10 @@ for (m in 1:length(kappa1)) {
     #print(paste('M2', tot_ie_m2))
     tot_ie_m1m2 <- 0
 
-    for (j in 1:8) {
-      for (k in 1:length(grep('region', names(final_df)))) {
+    # NOTE: j should iterate over the indices of all the included immune variables
+    for (j in 1:2) {
+      # NOTE: k should iterate over the indices of all the included amygconn variables
+      for (k in 1:5) {
         tot_ie_m1m2 <- tot_ie_m1m2 + re_long[[p]][[m]]$beta[j]*re_long[[p]][[m]]$Lambda[j, k]*re_long[[p]][[m]]$pi[k]
       }
     }
@@ -88,9 +90,49 @@ for (m in 1:length(kappa1)) {
 
 ######################## Optimal model according to BIC? #######################
 
+bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE),]
+
+# What are the non-zero paths?
+p <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'p']
+m <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'm']
+
+important_immune <- re_long[[p]][[m]]$IE.M1[re_long[[p]][[m]]$IE.M1 != 0] #IL10
+important_regs <- re_long[[p]][[m]]$IE.M2[re_long[[p]][[m]]$IE.M2 != 0]
+
+# Effect sizes
+re_long[[1]][[1]]$IE.M1[names(important_immune)]
+#       M1.1
+#0.006553306
+re_long[[1]][[1]]$IE.M2[names(important_regs)]
+#        M2.2        M2.12       M2.235       M2.257       M2.274
+# 0.003744796 -0.087345027  0.139565645  0.028881367 -0.048287221
+
+# X -> M1 -> Y
+re_long[[1]][[1]]$beta[,names(important_immune)]
+#0.1813547
+re_long[[1]][[1]]$theta[names(important_immune),]
+#0.0361353
+
+# X -> M2 -> Y
+re_long[[1]][[1]]$zeta[,names(important_regs)]
+#M2.2      M2.12     M2.235     M2.257     M2.274
+#-0.2018542  0.1920313  0.2984655 -0.1921725 -0.2939074
+re_long[[1]][[1]]$pi[names(important_regs),]
+#       M2.2       M2.12      M2.235      M2.257      M2.274
+#-0.01855199 -0.45484779  0.46761072 -0.15028880  0.16429398
+
+# Region mapping
+map_df <- data.frame(matnames = names(re_long[[p]][[m]]$IE.M2),
+                     regnames = names(final_df)[17:ncol(final_df)])
+
+important_df <- map_df[map_df$matnames %in% names(important_regs), ]
+
+
+############################# Get model of interest ############################
+
 # Model that includes two immune variables?
 unique(bic_df$carda1)
-carda1_df <- bic_df[which(bic_df$carda1 == 2), ]
+carda1_df <- bic_df[which(bic_df$carda1 == 3), ]
 
 if (nrow(carda1_df) == 1) {
   row <- rownames(carda1_df)
@@ -104,3 +146,7 @@ m <- bic_df[row, 'm']
 
 important_immune <- re_long[[p]][[m]]$IE.M1[re_long[[p]][[m]]$IE.M1 != 0] #IL10, Basophils
 important_regs <- re_long[[p]][[m]]$IE.M2[re_long[[p]][[m]]$IE.M2 != 0]
+
+
+
+#

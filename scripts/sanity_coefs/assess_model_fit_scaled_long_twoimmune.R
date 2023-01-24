@@ -88,111 +88,21 @@ for (m in 1:length(kappa1)) {
   }
 }
 
-######################## Optimal model according to BIC? #######################
+############################# Get model of interest ############################
 
-bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE),]
+# Model that includes two immune variables?
+unique(bic_df$carda1)
+carda1_df <- bic_df[which(bic_df$carda1 == 2), ]
+
+if (nrow(carda1_df) == 1) {
+  row <- rownames(carda1_df)
+} else {
+  print('investigate')
+}
 
 # What are the non-zero paths?
-p <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'p']
-m <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'm']
+p <- bic_df[row, 'p']
+m <- bic_df[row, 'm']
 
-important_immune <- re_long[[p]][[m]]$IE.M1[re_long[[p]][[m]]$IE.M1 != 0] #IL10
+important_immune <- re_long[[p]][[m]]$IE.M1[re_long[[p]][[m]]$IE.M1 != 0] #IL10, Basophils
 important_regs <- re_long[[p]][[m]]$IE.M2[re_long[[p]][[m]]$IE.M2 != 0]
-
-# Effect sizes
-re_long[[1]][[1]]$IE.M1[names(important_immune)]
-#       M1.1
-#0.006553306
-re_long[[1]][[1]]$IE.M2[names(important_regs)]
-#        M2.2        M2.12       M2.235       M2.257       M2.274
-# 0.003744796 -0.087345027  0.139565645  0.028881367 -0.048287221
-
-# X -> M1 -> Y
-re_long[[1]][[1]]$beta[,names(important_immune)]
-#0.1813547
-re_long[[1]][[1]]$theta[names(important_immune),]
-#0.0361353
-
-# X -> M2 -> Y
-re_long[[1]][[1]]$zeta[,names(important_regs)]
-#M2.2      M2.12     M2.235     M2.257     M2.274
-#-0.2018542  0.1920313  0.2984655 -0.1921725 -0.2939074
-re_long[[1]][[1]]$pi[names(important_regs),]
-#       M2.2       M2.12      M2.235      M2.257      M2.274
-#-0.01855199 -0.45484779  0.46761072 -0.15028880  0.16429398
-
-# Region mapping
-map_df <- data.frame(matnames = names(re_long[[p]][[m]]$IE.M2),
-                     regnames = names(final_df)[17:ncol(final_df)])
-
-important_df <- map_df[map_df$matnames %in% names(important_regs), ]
-
-
-########################### Unpenalized coefficients ###########################
-
-# November 11, 2022: NOT WORKING...
-
-###### Immune
-# scale
-final_df$RCADS_sum <- scale(final_df$RCADS_sum)
-final_df$IL10 <- scale(final_df$IL10)
-
-# M1.1
-m1.1onx_mod <- lm(IL10 ~ ever, final_df)
-yonxm1.1_mod <- lm(RCADS_sum ~ ever + IL10, final_df)
-
-beta1 <- m1.1onx_mod$coefficients[2]
-theta1 <- yonxm1.1_mod$coefficients[3]
-beta1theta1 <- beta1*theta1
-
-###### Amygdala
-# scale
-final_df[, important_df$regnames] <- scale(final_df[, important_df$regnames])
-
-# M2.2
-m2.2onx_mod <- lm(region2 ~ ever, final_df)
-yonxm2.2_mod <- lm(RCADS_sum ~ ever + region2, final_df)
-
-zeta2 <- m2.2onx_mod$coefficients[2]
-pi2 <- yonxm2.2_mod$coefficients[3]
-zeta2pi2 <- zeta2*pi2
-
-# M2.12
-m2.12onx_mod <- lm(region14 ~ ever, final_df)
-yonxm2.12_mod <- lm(RCADS_sum ~ ever + region14, final_df)
-
-zeta12 <- m2.12onx_mod$coefficients[2]
-pi12 <- yonxm2.12_mod$coefficients[3]
-zeta12pi12 <- zeta12*pi12
-
-# M2.235
-m2.235onx_mod <- lm(region237 ~ ever, final_df)
-yonxm2.235_mod <- lm(RCADS_sum ~ ever + region237, final_df)
-
-zeta235 <- m2.235onx_mod$coefficients[2]
-pi235 <- yonxm2.235_mod$coefficients[3]
-zeta235pi235 <- zeta235*pi235
-
-# M2.257
-m2.257onx_mod <- lm(region261 ~ ever, final_df)
-yonxm2.257_mod <- lm(RCADS_sum ~ ever + region261, final_df)
-
-zeta257 <- m2.257onx_mod$coefficients[2]
-pi257 <- yonxm2.257_mod$coefficients[3]
-zeta257pi257 <- zeta257*pi257
-
-# M2.274
-m2.274onx_mod <- lm(region281 ~ ever, final_df)
-yonxm2.274_mod <- lm(RCADS_sum ~ ever + region281, final_df)
-
-zeta274 <- m2.274onx_mod$coefficients[2]
-pi274 <- yonxm2.274_mod$coefficients[3]
-zeta274pi274 <- zeta274*pi274
-
-c(zeta2pi2, zeta12pi12, zeta235pi235, zeta257pi257, zeta274pi274)
-# ^ these are not lining up... should be bigger than the penalized coefficients
-
-
-
-
-#
