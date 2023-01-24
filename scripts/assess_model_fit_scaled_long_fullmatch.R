@@ -116,14 +116,14 @@ re_long[[1]][[1]]$theta[names(important_immune),]
 
 # X -> M2 -> Y
 re_long[[1]][[1]]$zeta[,names(important_regs)]
-#      M2.2      M2.12     M2.116     M2.130     M2.188     M2.235     M2.248
-#-0.1390642  0.1797810  0.2130487  0.1785623  0.1994847  0.3016011  0.2112760
-#    M2.257
-#-0.1579374
+# M2.2        M2.12      M2.116     M2.130     M2.188     M2.235     M2.248
+# -0.1390642  0.1797810  0.2130487  0.1785623  0.1994847  0.3016011  0.2112760
+# M2.257
+# -0.1579374
 re_long[[1]][[1]]$pi[names(important_regs),]
-#       M2.2       M2.12      M2.116      M2.130      M2.188      M2.235
-#-0.02730104 -0.45725459 -0.24670948 -0.29925852 -0.14283380  0.46303581
-#     M2.248      M2.257
+# M2.2        M2.12       M2.116      M2.130      M2.188       M2.235
+# -0.02730104 -0.45725459 -0.24670948 -0.29925852 -0.14283380  0.46303581
+# M2.248     M2.257
 # 0.11340899 -0.15518400
 
 # Region mapping
@@ -131,73 +131,3 @@ map_df <- data.frame(matnames = names(re_long[[p]][[m]]$IE.M2),
                      regnames = names(final_df)[17:ncol(final_df)])
 
 important_df <- map_df[map_df$matnames %in% names(important_regs), ]
-
-
-########################### Unpenalized coefficients ###########################
-
-# November 11, 2022: NOT WORKING...
-
-###### Immune
-# scale
-final_df$RCADS_sum <- scale(final_df$RCADS_sum)
-final_df$IL10 <- scale(final_df$IL10)
-
-# M1.1
-m1.1onx_mod <- lm(IL10 ~ ever, final_df)
-yonxm1.1_mod <- lm(RCADS_sum ~ ever + IL10, final_df)
-
-beta1 <- m1.1onx_mod$coefficients[2]
-theta1 <- yonxm1.1_mod$coefficients[3]
-beta1theta1 <- beta1*theta1
-
-###### Amygdala
-# scale
-final_df[, important_df$regnames] <- scale(final_df[, important_df$regnames])
-
-# M2.2
-m2.2onx_mod <- lm(region2 ~ ever, final_df)
-yonxm2.2_mod <- lm(RCADS_sum ~ ever + region2, final_df)
-
-zeta2 <- m2.2onx_mod$coefficients[2]
-pi2 <- yonxm2.2_mod$coefficients[3]
-zeta2pi2 <- zeta2*pi2
-
-# M2.12
-m2.12onx_mod <- lm(region14 ~ ever, final_df)
-yonxm2.12_mod <- lm(RCADS_sum ~ ever + region14, final_df)
-
-zeta12 <- m2.12onx_mod$coefficients[2]
-pi12 <- yonxm2.12_mod$coefficients[3]
-zeta12pi12 <- zeta12*pi12
-
-# M2.235
-m2.235onx_mod <- lm(region237 ~ ever, final_df)
-yonxm2.235_mod <- lm(RCADS_sum ~ ever + region237, final_df)
-
-zeta235 <- m2.235onx_mod$coefficients[2]
-pi235 <- yonxm2.235_mod$coefficients[3]
-zeta235pi235 <- zeta235*pi235
-
-# M2.257
-m2.257onx_mod <- lm(region261 ~ ever, final_df)
-yonxm2.257_mod <- lm(RCADS_sum ~ ever + region261, final_df)
-
-zeta257 <- m2.257onx_mod$coefficients[2]
-pi257 <- yonxm2.257_mod$coefficients[3]
-zeta257pi257 <- zeta257*pi257
-
-# M2.274
-m2.274onx_mod <- lm(region281 ~ ever, final_df)
-yonxm2.274_mod <- lm(RCADS_sum ~ ever + region281, final_df)
-
-zeta274 <- m2.274onx_mod$coefficients[2]
-pi274 <- yonxm2.274_mod$coefficients[3]
-zeta274pi274 <- zeta274*pi274
-
-c(zeta2pi2, zeta12pi12, zeta235pi235, zeta257pi257, zeta274pi274)
-# ^ these are not lining up... should be bigger than the penalized coefficients
-
-
-
-
-#

@@ -2,7 +2,7 @@
 ### mediation models, and summarizes the hyper-parameters and log likelihoods
 ###
 ### Ellyn Butler
-### January 20, 2022
+### January 23, 2023
 
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
@@ -54,8 +54,10 @@ for (m in 1:length(kappa1)) {
     #print(paste('M2', tot_ie_m2))
     tot_ie_m1m2 <- 0
 
-    for (j in 1:8) {
-      for (k in 1:length(grep('region', names(final_df)))) {
+    # NOTE: j should iterate over the indices of all the included immune variables
+    for (j in 1:2) {
+      # NOTE: k should iterate over the indices of all the included amygconn variables
+      for (k in 1:5) {
         tot_ie_m1m2 <- tot_ie_m1m2 + re_long[[p]][[m]]$beta[j]*re_long[[p]][[m]]$Lambda[j, k]*re_long[[p]][[m]]$pi[k]
       }
     }
@@ -82,8 +84,8 @@ for (m in 1:length(kappa1)) {
     bic_df[q, 'carda3'] <- sum(re_long[[p]][[m]]$IE.M1M2 != 0)
     bic_df[q, 'bic'] <- bic_df[q, 'neg2loglik'] + logn*(bic_df[q, 'carda1'] + bic_df[q, 'carda2'] + bic_df[q, 'carda3'])
 
+    q = q+1
   }
-  q = q+1
 }
 
 ######################## Optimal model according to BIC? #######################
