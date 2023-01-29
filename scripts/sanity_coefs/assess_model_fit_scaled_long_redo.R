@@ -2,7 +2,7 @@
 ### mediation models, and summarizes the hyper-parameters and log likelihoods
 ###
 ### Ellyn Butler
-### January 26, 2023
+### January 29, 2023
 
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
@@ -12,7 +12,7 @@ logn = log(nrow(final_df))
 
 ################################## Full Model ##################################
 
-re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata_allimmune.rds')
+re_long <- readRDS('/projects/b1108/projects/violence_mediation/models/viol_re_scaled_long_fulldata_redo.rds')
 
 full_df <- expand.grid(kappa1, mu.prod)
 names(full_df) <- c('kappa1', 'muprod')
@@ -54,10 +54,8 @@ for (m in 1:length(kappa1)) {
     #print(paste('M2', tot_ie_m2))
     tot_ie_m1m2 <- 0
 
-    # NOTE: j should iterate over the indices of all the included immune variables
-    for (j in 1:2) {
-      # NOTE: k should iterate over the indices of all the included amygconn variables
-      for (k in 1:5) {
+    for (j in 1:8) {
+      for (k in 1:length(grep('region', names(final_df)))) {
         tot_ie_m1m2 <- tot_ie_m1m2 + re_long[[p]][[m]]$beta[j]*re_long[[p]][[m]]$Lambda[j, k]*re_long[[p]][[m]]$pi[k]
       }
     }
@@ -86,6 +84,7 @@ for (m in 1:length(kappa1)) {
 
     q = q+1
   }
+  #q = q+1... OOPS (January 23, 2023)
 }
 
 ######################## Optimal model according to BIC? #######################
@@ -99,55 +98,106 @@ m <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'm']
 important_immune <- re_long[[p]][[m]]$IE.M1[re_long[[p]][[m]]$IE.M1 != 0] #IL10
 important_regs <- re_long[[p]][[m]]$IE.M2[re_long[[p]][[m]]$IE.M2 != 0]
 
+important_immune
+# M1.1
+# 0.0002161703
+
+important_regs
+#          M2.2         M2.12        M2.235        M2.257        M2.274
+# -0.0030640637 -0.0008067457  0.0071234200  0.0069181768 -0.0027821892
+
 # Effect sizes
-re_long[[1]][[1]]$IE.M1
-#         M1.1          M1.2          M1.3          M1.4          M1.5
-# 1.444435e-02 -3.656979e-03  4.896994e-05 -8.505021e-03  9.372591e-03
-#         M1.6          M1.7          M1.8          M1.9         M1.10
-# 7.659436e-03  1.508823e-04  1.157119e-03 -5.491350e-03  3.376204e-03
-#        M1.11         M1.12
-#-3.821061e-03  1.056867e-02
-re_long[[1]][[1]]$IE.M2
-#       M2.1        M2.2        M2.3        M2.4        M2.5
-#-0.02809104 -0.03188148  0.05783207  0.03693021 -0.03120801
+re_long[[1]][[1]]$IE.M1[names(important_immune)]
+# M1.1
+# 0.006553306
+re_long[[1]][[1]]$IE.M2[names(important_regs)]
+# M2.2        M2.12         M2.235       M2.257      M2.274
+# 0.003744796 -0.087345027  0.139565645  0.028881367 -0.048287221
 
 # X -> M1 -> Y
-re_long[[1]][[1]]$beta
-#      M1.1      M1.2         M1.3       M1.4       M1.5       M1.6       M1.7
-# 0.1813547 0.1314802 -0.008398852 0.08775622 0.06144929 -0.1073323 0.04676926
-#        M1.8        M1.9       M1.10      M1.11    M1.12
-# -0.06940863 -0.06408598 -0.03777171 -0.2056006 0.115703
-re_long[[1]][[1]]$theta
-# M1.1   0.079646949
-# M1.2  -0.027813920
-# M1.3  -0.005830552
-# M1.4  -0.096916448
-# M1.5   0.152525611
-# M1.6  -0.071361906
-# M1.7   0.003226099
-# M1.8  -0.016671113
-# M1.9   0.085687236
-# M1.10 -0.089384465
-# M1.11  0.018584873
-# M1.12  0.091343112
+re_long[[1]][[1]]$beta[,names(important_immune)]
+#0.1813547
+re_long[[1]][[1]]$theta[names(important_immune),]
+#0.0361353
 
 # X -> M2 -> Y
-re_long[[1]][[1]]$zeta
-#        M2.1      M2.2      M2.3       M2.4       M2.5
-#  -0.2018541 0.1920314 0.2984655 -0.1921725 -0.2939074
-# Full model:
+re_long[[1]][[1]]$zeta[,names(important_regs)]
 # M2.2        M2.12      M2.235    M2.257     M2.274
 # -0.2018542  0.1920313  0.2984655 -0.1921725 -0.2939074
-
-re_long[[1]][[1]]$pi
-# M2.1  0.1391651 ***
-# M2.2 -0.1660223
-# M2.3  0.1937647
-# M2.4 -0.1921722
-# M2.5  0.1061831
-# Full model:
+re_long[[1]][[1]]$pi[names(important_regs),]
 # M2.2        M2.12        M2.235     M2.257       M2.274
 # -0.01855199 -0.45484779  0.46761072 -0.15028880  0.16429398
+
+# Region mapping
+map_df <- data.frame(matnames = names(re_long[[p]][[m]]$IE.M2),
+                     regnames = names(final_df)[17:ncol(final_df)])
+
+important_df <- map_df[map_df$matnames %in% names(important_regs), ]
+
+
+########################### Unpenalized coefficients ###########################
+
+# November 11, 2022: NOT WORKING...
+
+###### Immune
+# scale
+final_df$RCADS_sum <- scale(final_df$RCADS_sum)
+final_df$IL10 <- scale(final_df$IL10)
+
+# M1.1
+m1.1onx_mod <- lm(IL10 ~ ever, final_df)
+yonxm1.1_mod <- lm(RCADS_sum ~ ever + IL10, final_df)
+
+beta1 <- m1.1onx_mod$coefficients[2]
+theta1 <- yonxm1.1_mod$coefficients[3]
+beta1theta1 <- beta1*theta1
+
+###### Amygdala
+# scale
+final_df[, important_df$regnames] <- scale(final_df[, important_df$regnames])
+
+# M2.2
+m2.2onx_mod <- lm(region2 ~ ever, final_df)
+yonxm2.2_mod <- lm(RCADS_sum ~ ever + region2, final_df)
+
+zeta2 <- m2.2onx_mod$coefficients[2]
+pi2 <- yonxm2.2_mod$coefficients[3]
+zeta2pi2 <- zeta2*pi2
+
+# M2.12
+m2.12onx_mod <- lm(region14 ~ ever, final_df)
+yonxm2.12_mod <- lm(RCADS_sum ~ ever + region14, final_df)
+
+zeta12 <- m2.12onx_mod$coefficients[2]
+pi12 <- yonxm2.12_mod$coefficients[3]
+zeta12pi12 <- zeta12*pi12
+
+# M2.235
+m2.235onx_mod <- lm(region237 ~ ever, final_df)
+yonxm2.235_mod <- lm(RCADS_sum ~ ever + region237, final_df)
+
+zeta235 <- m2.235onx_mod$coefficients[2]
+pi235 <- yonxm2.235_mod$coefficients[3]
+zeta235pi235 <- zeta235*pi235
+
+# M2.257
+m2.257onx_mod <- lm(region261 ~ ever, final_df)
+yonxm2.257_mod <- lm(RCADS_sum ~ ever + region261, final_df)
+
+zeta257 <- m2.257onx_mod$coefficients[2]
+pi257 <- yonxm2.257_mod$coefficients[3]
+zeta257pi257 <- zeta257*pi257
+
+# M2.274
+m2.274onx_mod <- lm(region281 ~ ever, final_df)
+yonxm2.274_mod <- lm(RCADS_sum ~ ever + region281, final_df)
+
+zeta274 <- m2.274onx_mod$coefficients[2]
+pi274 <- yonxm2.274_mod$coefficients[3]
+zeta274pi274 <- zeta274*pi274
+
+c(zeta2pi2, zeta12pi12, zeta235pi235, zeta257pi257, zeta274pi274)
+# ^ these are not lining up... should be bigger than the penalized coefficients
 
 
 
