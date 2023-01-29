@@ -13,7 +13,7 @@
 
 Rscript /projects/b1108/projects/violence_mediation/scripts/sanity_coefs/viol_fit_model_scaled_long_redo.R
 
-# sbatch -o /projects/b1108/projects/violence_mediation/launch/viol_fit_scaled_long_fulldata_redo.txt /projects/b1108/projects/violence_mediation/scripts/launch_viol_fit_model_scaled_long_redo.sh
+# sbatch -o /projects/b1108/projects/violence_mediation/launch/viol_fit_scaled_long_fulldata_redo.txt /projects/b1108/projects/violence_mediation/scripts/sanity_coefs/launch_viol_fit_model_scaled_long_redo.sh
 
 
 # TO DO: Increase time?

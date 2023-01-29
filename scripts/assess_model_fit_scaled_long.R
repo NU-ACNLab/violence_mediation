@@ -98,12 +98,20 @@ m <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'm']
 important_immune <- re_long[[p]][[m]]$IE.M1[re_long[[p]][[m]]$IE.M1 != 0] #IL10
 important_regs <- re_long[[p]][[m]]$IE.M2[re_long[[p]][[m]]$IE.M2 != 0]
 
+important_immune
+# M1.1
+# 0.0002161703
+
+important_regs
+#          M2.2         M2.12        M2.235        M2.257        M2.274 
+# -0.0030640637 -0.0008067457  0.0071234200  0.0069181768 -0.0027821892
+
 # Effect sizes
 re_long[[1]][[1]]$IE.M1[names(important_immune)]
 # M1.1
 # 0.006553306
 re_long[[1]][[1]]$IE.M2[names(important_regs)]
-# M2.2        M2.12       M2.235       M2.257       M2.274
+# M2.2        M2.12         M2.235       M2.257      M2.274
 # 0.003744796 -0.087345027  0.139565645  0.028881367 -0.048287221
 
 # X -> M1 -> Y
@@ -117,7 +125,7 @@ re_long[[1]][[1]]$zeta[,names(important_regs)]
 # M2.2        M2.12      M2.235    M2.257     M2.274
 # -0.2018542  0.1920313  0.2984655 -0.1921725 -0.2939074
 re_long[[1]][[1]]$pi[names(important_regs),]
-# M2.2        M2.12        M2.235     M2.257       M2.274 
+# M2.2        M2.12        M2.235     M2.257       M2.274
 # -0.01855199 -0.45484779  0.46761072 -0.15028880  0.16429398
 
 # Region mapping
