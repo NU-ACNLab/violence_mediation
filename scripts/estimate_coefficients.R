@@ -2,7 +2,9 @@
 ### selected using the high-dimensional multi-modal mediation model.
 ###
 ### Ellyn Butler
-### December 6, 2022 - January 31, 2023
+### December 6, 2022 - March 22, 2023
+
+set.seed(2023)
 
 df <- read.csv('/projects/b1108/projects/violence_mediation/data/combined_data.csv')
 
@@ -74,20 +76,42 @@ zetapi_281 <- m2.281_xm1_mod$coefficients[['ever']]*y_xm1m2_mod$coefficients[['r
 
 ######################### Using the `mediation` package ########################
 
+
+########################### Using the `lavaan` package #########################
 library('lavaan')
+
+
+###### IL10
+il10_model <- "
+  IL10 ~ a1 * ever
+  region2 ~ a2 * ever + d21 * IL10
+  RCADS_sum ~  cp * ever + b1 * IL10 + b2 * region2 + b3 * region14 + b4 * region237 + b5 * region261 + b6 * region281
+  ind_eff := a1 * b1
+"
+
+il10_fit <- lavaan::sem(model = il10_model, data = df2, se = "boot", bootstrap = 5000)
+#lavaan WARNING: 9 bootstrap runs failed or did not converge.
+
+il10_est <- lavaan::parameterEstimates(il10_fit, boot.ci.type = "bca.simple")
+#         lhs op       rhs   label    est    se      z pvalue ci.lower ci.upper
+#29   ind_eff :=     a1*b1 ind_eff  0.016 0.022  0.723  0.470   -0.006    0.091
+
+save(il10_fit, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/il10_fit.RData')
+save(il10_est, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/il10_est.RData')
 
 ###### region2
 region2_model <- "
   IL10 ~ a1 * ever
   region2 ~ a2 * ever + d21 * IL10
   RCADS_sum ~  cp * ever + b1 * IL10 + b2 * region2 + b3 * region14 + b4 * region237 + b5 * region261 + b6 * region281
-  ind_eff := a1 * d21 * b2
+  ind_eff := a2 * b2
 "
 
 region2_fit <- lavaan::sem(model = region2_model, data = df2, se = "boot", bootstrap = 5000)
-#lavaan WARNING: 9 bootstrap runs failed or did not converge.
 
 region2_est <- lavaan::parameterEstimates(region2_fit, boot.ci.type = "bca.simple")
+#         lhs op       rhs   label    est    se      z pvalue ci.lower ci.upper
+#29   ind_eff :=     a2*b2 ind_eff -0.032 0.023 -1.414  0.157   -0.092    0.00029
 
 save(region2_fit, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region2_fit.RData')
 save(region2_est, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region2_est.RData')
@@ -97,42 +121,48 @@ region14_model <- "
   IL10 ~ a1 * ever
   region14 ~ a2 * ever + d21 * IL10
   RCADS_sum ~  cp * ever + b1 * IL10 + b2 * region14 + b3 * region2 + b4 * region237 + b5 * region261 + b6 * region281
-  ind_eff := a1 * d21 * b2
+  ind_eff := a2 * b2
 "
 
 region14_fit <- lavaan::sem(model = region14_model, data = df2, se = "boot", bootstrap = 5000)
 
 region14_est <- lavaan::parameterEstimates(region14_fit, boot.ci.type = "bca.simple")
+#         lhs op       rhs   label    est    se      z pvalue ci.lower ci.upper
+#29   ind_eff :=     a2*b2 ind_eff -0.027 0.025 -1.079  0.280   -0.093    0.008
 
 save(region14_fit, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region14_fit.RData')
 save(region14_est, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region14_est.RData')
 
-###### region237
+###### region237 - hippocampus
 region237_model <- "
   IL10 ~ a1 * ever
   region237 ~ a2 * ever + d21 * IL10
   RCADS_sum ~  cp * ever + b1 * IL10 + b2 * region237 + b3 * region14 + b4 * region2 + b5 * region261 + b6 * region281
-  ind_eff := a1 * d21 * b2
+  ind_eff := a2 * b2
 "
 
 region237_fit <- lavaan::sem(model = region237_model, data = df2, se = "boot", bootstrap = 5000)
 
 region237_est <- lavaan::parameterEstimates(region237_fit, boot.ci.type = "bca.simple")
+#         lhs op       rhs   label    est    se      z pvalue ci.lower ci.upper
+#29   ind_eff :=     a2*b2 ind_eff  0.059 0.032  1.867  0.062    0.009    0.134!!!!!!!!!!!!!!!!!
 
 save(region237_fit, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region237_fit.RData')
 save(region237_est, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region237_est.RData')
 
-###### region261
+###### region261 - pallidum
 region261_model <- "
   IL10 ~ a1 * ever
   region261 ~ a2 * ever + d21 * IL10
   RCADS_sum ~  cp * ever + b1 * IL10 + b2 * region261 + b3 * region14 + b4 * region237 + b5 * region2 + b6 * region281
-  ind_eff := a1 * d21 * b2
+  ind_eff := a2 * b2
 "
 
 region261_fit <- lavaan::sem(model = region261_model, data = df2, se = "boot", bootstrap = 5000)
 
 region261_est <- lavaan::parameterEstimates(region261_fit, boot.ci.type = "bca.simple")
+#         lhs op       rhs   label    est    se      z pvalue ci.lower ci.upper
+#29   ind_eff :=     a2*b2 ind_eff  0.043 0.034  1.238  0.216   -0.009    0.127
 
 save(region261_fit, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region261_fit.RData')
 save(region261_est, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region261_est.RData')
@@ -142,12 +172,14 @@ region281_model <- "
   IL10 ~ a1 * ever
   region281 ~ a2 * ever + d21 * IL10
   RCADS_sum ~  cp * ever + b1 * IL10 + b2 * region281 + b3 * region14 + b4 * region237 + b5 * region261 + b6 * region2
-  ind_eff := a1 * d21 * b2
+  ind_eff := a2 * b2
 "
 
 region281_fit <- lavaan::sem(model = region281_model, data = df2, se = "boot", bootstrap = 5000)
 
 region281_est <- lavaan::parameterEstimates(region281_fit, boot.ci.type = "bca.simple")
+#         lhs op       rhs   label    est    se      z pvalue ci.lower ci.upper
+#29   ind_eff :=     a2*b2 ind_eff -0.029 0.025 -1.188  0.235   -0.099    0.002
 
 save(region281_fit, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region281_fit.RData')
 save(region281_est, file = '/projects/b1108/projects/violence_mediation/models/lavaan_output/region281_est.RData')

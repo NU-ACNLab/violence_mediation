@@ -20,6 +20,9 @@ final_df <- merge(final_df, demo_df)
 full_match <- matchit(ever ~ black + white + otherrace + age_mri + female + PubCat + IPR,
                          data=final_df, method='full', interactive=FALSE)
 
+# write out weights
+saveRDS(full_match, file='/projects/b1108/projects/violence_mediation/models/matching/fullmatch.rds')
+
 # get data types
 immune <- c('IL10', 'IL6', 'IL8', 'TNFa', 'CRP', 'uPAR', 'ClassicalMono',
             'NonClassicalMono', 'Neutrophils', 'Lymphocytes', 'Eosinophils',

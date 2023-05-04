@@ -2,7 +2,7 @@
 ### mediation models, and summarizes the hyper-parameters and log likelihoods
 ###
 ### Ellyn Butler
-### May 20, 2022 - January 23, 2023
+### May 20, 2022 - February 1, 2023
 
 kappa1=kappa2=kappa3=kappa4<-10^c(seq(-5,-3,length.out=3),seq(-3,0,length.out=11)[-1],seq(0,2,length.out=6)[-1])
 mu.prod<-c(0,0.1,0.5,1,2,Inf)
@@ -94,6 +94,8 @@ bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE),]
 # What are the non-zero paths?
 p <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'p']
 m <- bic_df[bic_df$bic %in%  min(bic_df$bic, na.rm=TRUE), 'm']
+
+re_long[[p]][[m]]$converge #converges
 
 important_immune <- re_long[[p]][[m]]$IE.M1[re_long[[p]][[m]]$IE.M1 != 0] #IL10
 important_regs <- re_long[[p]][[m]]$IE.M2[re_long[[p]][[m]]$IE.M2 != 0]

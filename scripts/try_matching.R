@@ -23,6 +23,7 @@
 ################################# Load packages ################################
 
 library('MatchIt') # v 4.4.0
+library('cobalt')
 
 
 ################################### Load data ##################################
@@ -94,6 +95,22 @@ plot(full_match, type='jitter', interactive=FALSE)
 plot(full_match, type='qq', interactive=FALSE, which.xs=c('black', 'white', 'otherrace'))
 plot(full_match, type='qq', interactive=FALSE, which.xs=c('age_mri', 'female'))
 plot(full_match, type='qq', interactive=FALSE, which.xs=c('PubCat', 'IPR'))
+dev.off()
+
+# love plot
+
+v <- data.frame(old = c('IPR', 'female', 'age_mri', 'PubCat', 'otherrace',
+                        'white', 'black'),
+                new = c('IPR', 'female', 'age', 'puberty', 'other race',
+                        'white', 'black'))
+
+full_love <- love.plot(bal.tab(full_match), stat = 'mean.diffs', threshold = .1,
+                    var.order = 'unadjusted', var.names = v) +
+                    theme(legend.position = 'bottom') +
+                    scale_color_manual(values=c('cadetblue2', 'darkslateblue'))
+
+pdf('/projects/b1108/projects/violence_mediation/plots/matching/full_love.pdf', width=4, height=4)
+full_love
 dev.off()
 
 full_match_caliper <- matchit(ever ~ black + white + otherrace + age_mri + female + PubCat + IPR,
